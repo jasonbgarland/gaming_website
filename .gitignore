@@ -1,0 +1,44 @@
+# .gitignore for Python, Node.js, and Docker monorepo
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.venv/
+venv/
+
+# Node.js
+node_modules/
+.npm/
+.next/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Docker
+*.log
+docker-compose.override.yml
+.env.docker
+
+# macOS
+.DS_Store
+
+# VSCode
+.vscode/
+
+# General
+*.swp
+*.swo
+.idea/
+
+# Test/coverage
+.coverage
+htmlcov/
+coverage.xml
+
+# Misc
+*.sqlite3
+# This file is used to track the gaming website project plan as I go.
+gaming_website.md
