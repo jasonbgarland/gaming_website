@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "gaming-website-monorepo"
+version = "0.1.0"
+description = "Monorepo for gaming library microservices project"
+authors = ["Your Name <your@email.com>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.12,<4.0"
+sqlalchemy = "^2.0.41"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pylint = "*"
+pre-commit = "*"
+isort = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

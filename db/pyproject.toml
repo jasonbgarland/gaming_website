@@ -1,0 +1,19 @@
+[project]
+name = "gaming-library-db"
+version = "0.1.0"
+description = "Database migrations and models for Gaming Library monorepo"
+requires-python = ">=3.12"
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+alembic = "*"
+sqlalchemy = "*"
+psycopg = {extras = ["binary"], version = "*"}
+python-dotenv = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
