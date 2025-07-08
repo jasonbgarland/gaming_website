@@ -8,7 +8,9 @@ Covers User, Game, Collection, and CollectionEntry models, including relationshi
 import unittest
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
-from db.models import Base, User, Game, Collection, CollectionEntry
+from db.models.user import User, Base
+from db.models.game import Game
+from db.models.collection import Collection, CollectionEntry
 
 
 class BaseModelTestCase(unittest.TestCase):

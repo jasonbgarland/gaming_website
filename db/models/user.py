@@ -24,8 +24,8 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     created_at = Column(
         DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False,  # pylint: disable=not-callable
+        server_default=func.now(),  # pylint: disable=not-callable
+        nullable=False,
     )
     is_active = Column(
         Integer, default=1, nullable=False

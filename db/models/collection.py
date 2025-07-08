@@ -33,8 +33,8 @@ class Collection(Base):
     name: str = Column(String, nullable=False)
     created_at = Column(
         DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False,  # pylint: disable=not-callable
+        server_default=func.now(),  # pylint: disable=not-callable
+        nullable=False,
     )
     updated_at = Column(
         DateTime(timezone=True),
@@ -79,8 +79,8 @@ class CollectionEntry(Base):
     notes: str = Column(Text, nullable=True)
     added_at = Column(
         DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False,  # pylint: disable=not-callable
+        server_default=func.now(),  # pylint: disable=not-callable
+        nullable=False,
     )
     updated_at = Column(
         DateTime(timezone=True),

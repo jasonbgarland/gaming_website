@@ -154,8 +154,8 @@ Below is a set of incremental tasks you can tackle locally. Start with core piec
 | 1   | [x] | Repository         | Initialize Git repo, add README, install basic tooling                            | –              | 1–2 hours  |
 | 2   | [x] | Database           | Spin up local PostgreSQL (Docker), create `games_lib` DB                          | Task 1         | 30 minutes |
 | 3   | [x] | Database           | Define schemas & migrations: `users`, `games`, `collections` tables using Alembic | Task 2         | 1–2 hours  |
-| 4   | [ ] | Backend (Auth)     | Scaffold FastAPI service, install dependencies                                    | Task 1         | 30 minutes |
-| 5   | [ ] | Backend (Auth)     | Build signup/login endpoints (JWT-based)                                          | Tasks 3, 4     | 2–3 hours  |
+| 4   | [x] | Backend (Auth)     | Scaffold FastAPI service, install dependencies                                    | Task 1         | 30 minutes |
+| 5   | [x] | Backend (Auth)     | Build signup/login endpoints (JWT-based)                                          | Tasks 3, 4     | 2–3 hours  |
 | 6   | [ ] | Backend (GameData) | Implement IGDB client wrapper with API key support                                | Tasks 4, 5     | 1–2 hours  |
 | 7   | [ ] | Backend (Library)  | CRUD endpoints for user’s game collection                                         | Tasks 3, 5     | 2–3 hours  |
 | 8   | [ ] | Frontend (Next.js) | Scaffold Next.js app, install Tailwind CSS                                        | Task 1         | 1 hour     |
