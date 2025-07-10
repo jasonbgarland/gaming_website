@@ -7,6 +7,13 @@
 - I want to learn and improve my skills and knowledge, so please provide explanations for your suggestions
 - Always break down solutions into steps and confirm before proceeding
 - Follow test driven development (TDD) principles as much as possible
+  - Write a failing test first with expectations on how we would like to call the code.
+  - Run the test to confirm it fails.
+  - Write the minimum code to make the test pass.
+  - Run the test to confirm it passes.
+  - Perform any refactoring and confirm the test still passes.
+  - Verify pylint is passing before continuing to next step.
+- Use vs code tasks when possible to get repeatable results.
 - Prefer iterative solutions, start small and iterate
 - Write comments for complex logic
 
@@ -16,6 +23,8 @@
 
 - Follow PEP 8 style guidelines
 - Use type hints for function parameters and return values
+- Create docstrings for all public functions and classes
+- Organize imports using 'isort'
 - Prefer f-strings for string formatting
 - Use descriptive variable names (avoid abbreviations)
 - Use xUnit style tests using the built in `unittest` module
@@ -82,5 +91,7 @@
 
 ## Security Considerations
 
+- Always validate user input
+- Don't commit secrets or API keys
 - Always validate user input
 - Don't commit secrets or API keys

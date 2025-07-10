@@ -1,3 +1,7 @@
+"""
+Main FastAPI application for the authentication service.
+"""
+
 from fastapi import FastAPI
 from src.api.auth import router as auth_router
 

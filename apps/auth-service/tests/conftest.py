@@ -1,9 +1,14 @@
+"""
+Test configuration and fixtures for the authentication service.
+"""
+
+from passlib.context import CryptContext
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from db.models.user import Base  # noqa: F401
+
+# from db.models.user import Base  # noqa: F401
 from src.main import app
 from src.core.database import get_db
-from passlib.context import CryptContext
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///:memory:"
 
@@ -19,6 +24,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def override_get_db():
+    """Override for FastAPI dependency to use the test database session."""
     db = TestingSessionLocal()
     try:
         yield db
@@ -26,4 +32,5 @@ def override_get_db():
         db.close()
 
 
+# pylint: disable=duplicate-code
 app.dependency_overrides[get_db] = override_get_db

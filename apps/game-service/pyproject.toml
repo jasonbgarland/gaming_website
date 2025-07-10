@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "game-service"
+version = "0.1.0"
+description = "FastAPI microservice for IGDB game data integration."
+authors = ["Your Name <you@example.com>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.110.0"
+uvicorn = {extras = ["standard"], version = "^0.29.0"}
+httpx = "^0.27.0"
+pydantic = "^2.7.0"
+python-dotenv = "^1.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.0"
+pylint = "^3.3.7"

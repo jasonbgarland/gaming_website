@@ -1,46 +1,29 @@
+"""
+Unit tests for the /login endpoint.
+
+# pylint: disable=duplicate-code, R0801
+"""
+
 import unittest
-from fastapi.testclient import TestClient
-from db.models.user import Base
-from tests.conftest import TestingSessionLocal, connection, pwd_context
-from src.main import app
 
 
-class TestLoginEndpoint(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        # Create all tables once for the shared connection
-        Base.metadata.create_all(bind=connection)
+from tests.test_base import TestDBBase
 
-    @classmethod
-    def tearDownClass(cls):
-        # Drop all tables after all tests
-        Base.metadata.drop_all(bind=connection)
+
+class TestLoginEndpoint(TestDBBase):
+    """Unit tests for the /login endpoint."""
 
     def setUp(self):
-        self.client = TestClient(app)
+        super().setUp()
         # Create a user directly in the DB for login tests
-        from db.models.user import User
-
-        db = TestingSessionLocal()
-        user = User(
+        self.add_user(
             username="loginuser",
             email="loginuser@example.com",
-            hashed_password=pwd_context.hash("LoginPass123"),
+            password="LoginPass123",
         )
-        db.add(user)
-        db.commit()
-        db.close()
-
-    def tearDown(self):
-        # Clean up users after each test
-        from db.models.user import User
-
-        db = TestingSessionLocal()
-        db.query(User).delete()
-        db.commit()
-        db.close()
 
     def test_login_success(self):
+        """Test /login with correct credentials returns a token."""
         payload = {"username": "loginuser", "password": "LoginPass123"}
         response = self.client.post("/login", json=payload)
         self.assertEqual(200, response.status_code)
@@ -52,23 +35,27 @@ class TestLoginEndpoint(unittest.TestCase):
         self.assertTrue(token.count(".") == 2)
 
     def test_login_wrong_password(self):
+        """Test /login with wrong password returns 401."""
         payload = {"username": "loginuser", "password": "WrongPass"}
         response = self.client.post("/login", json=payload)
         self.assertEqual(401, response.status_code)
         self.assertIn("Invalid username or password", response.json().get("detail", ""))
 
     def test_login_nonexistent_user(self):
+        """Test /login with a non-existent user returns 401."""
         payload = {"username": "doesnotexist", "password": "AnyPass123"}
         response = self.client.post("/login", json=payload)
         self.assertEqual(401, response.status_code)
         self.assertIn("Invalid username or password", response.json().get("detail", ""))
 
     def test_login_missing_username(self):
+        """Test /login with missing username returns 422."""
         payload = {"password": "LoginPass123"}
         response = self.client.post("/login", json=payload)
         self.assertEqual(422, response.status_code)
 
     def test_login_missing_password(self):
+        """Test /login with missing password returns 422."""
         payload = {"username": "loginuser"}
         response = self.client.post("/login", json=payload)
         self.assertEqual(422, response.status_code)
