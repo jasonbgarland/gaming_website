@@ -8,7 +8,12 @@ repos:
         types: [python]
       - id: pylint-auth-service
         name: pylint-auth-service
-        entry: cd apps/auth-service && poetry run pylint src/api src/schemas src/core
+        entry: cd apps/auth_service && poetry run pylint src/api src/schemas src/core
+        language: system
+        types: [python]
+      - id: pylint-game-service
+        name: pylint-game-service
+        entry: cd apps/game_service && poetry run pylint src/api src/schemas src/core
         language: system
         types: [python]
   - repo: https://github.com/psf/black

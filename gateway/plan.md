@@ -11,8 +11,8 @@ This roadmap outlines the iterative development of a custom API Gateway using Fa
 - [ ] Project scaffolding (`gateway/`, `main.py`)
 - [ ] Install dependencies: `fastapi`, `uvicorn`, `httpx`, `python-dotenv`
 - [ ] Basic reverse proxy routing:
-  - `/api/auth` → `auth-service`
-  - `/api/games` → `game-service`
+  - `/api/auth` → `auth_service`
+  - `/api/games` → `game_service`
   - `/api/library` → `library-service`
 - [ ] JWT authentication middleware:
   - Extract and validate JWT from `Authorization` header

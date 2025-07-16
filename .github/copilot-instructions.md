@@ -12,10 +12,18 @@
   - Write the minimum code to make the test pass.
   - Run the test to confirm it passes.
   - Perform any refactoring and confirm the test still passes.
-  - Verify pylint is passing before continuing to next step.
+  - Verify feature is documented appropriately and pylint is passing before continuing to next step.
 - Use vs code tasks when possible to get repeatable results.
 - Prefer iterative solutions, start small and iterate
 - Write comments for complex logic
+
+## Checklist-Driven Workflow
+
+- For every project, create a `PROJECT_PLAN.md` with a high-level checklist of all major tasks/milestones.
+- For each work session or major task, create or update a `TASK_PLAN.md` with a sequential checklist of atomic steps.
+- Always work from top to bottom in the checklist, checking off items as you go.
+- Use these files to track progress and make it easy to pause/resume work at any time.
+- Update the checklists as tasks are completed or requirements change.
 
 ### Language-Specific Preferences
 
@@ -24,7 +32,6 @@
 - Follow PEP 8 style guidelines
 - Use type hints for function parameters and return values
 - Create docstrings for all public functions and classes
-- Organize imports using 'isort'
 - Prefer f-strings for string formatting
 - Use descriptive variable names (avoid abbreviations)
 - Use xUnit style tests using the built in `unittest` module
@@ -95,3 +102,31 @@
 - Don't commit secrets or API keys
 - Always validate user input
 - Don't commit secrets or API keys
+
+## Project Considerations
+
+### SQLite Testing Best Practice
+
+> **Note:** In-memory SQLite databases (`sqlite:///:memory:`) are per connection.  
+> For reliable test isolation, each test class (or test) should create its own engine and schema.
+
+**How to do this:**
+
+- In your test class, use `setUp()` to create a new engine, schema, and session for each test.
+- Use `tearDown()` to close the session and dispose the engine.
+- Do not share the engine or session across multiple tests.
+
+**Example:**
+
+```python
+def setUp(self):
+    self.engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(self.engine)
+    self.SessionLocal = sessionmaker(bind=self.engine)
+    self.db = self.SessionLocal()
+    self.service = CollectionService()
+
+def tearDown(self):
+    self.db.close()
+    self.engine.dispose()
+```

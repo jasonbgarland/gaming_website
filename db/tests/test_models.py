@@ -142,11 +142,51 @@ class TestCollectionModel(BaseModelTestCase):
             len(self.session.query(Collection).filter_by(user_id=user.id).all()), 2
         )
 
+    def test_collection_description_field(self):
+        """Test creating and updating a collection with a description."""
+        user = User(email="desc@b.com", username="desc", hashed_password="pw")
+        self.session.add(user)
+        self.session.commit()
+        collection = Collection(
+            user_id=user.id, name="Described", description="A test description."
+        )
+        self.session.add(collection)
+        self.session.commit()
+        fetched = self.session.get(Collection, collection.id)
+        self.assertEqual(fetched.description, "A test description.")
+        # Update description
+        fetched.description = "Updated description."
+        self.session.commit()
+        refetched = self.session.get(Collection, collection.id)
+        self.assertEqual(refetched.description, "Updated description.")
+
 
 class TestCollectionEntryModel(BaseModelTestCase):
-    """
-    Tests for the CollectionEntry model.
-    """
+    """Tests for the CollectionEntry model."""
+
+    def test_entry_custom_tags_field(self):
+        """Test creating and updating a collection entry with custom_tags."""
+        user = User(email="tags@b.com", username="tags", hashed_password="pw")
+        game = Game(title="TagGame", platform="PC")
+        self.session.add_all([user, game])
+        self.session.commit()
+        collection = Collection(user_id=user.id, name="TagCol")
+        self.session.add(collection)
+        self.session.commit()
+        tags = {"genre": "RPG", "favorite": True}
+        entry = CollectionEntry(
+            collection_id=collection.id, game_id=game.id, custom_tags=tags
+        )
+        self.session.add(entry)
+        self.session.commit()
+        fetched = self.session.get(CollectionEntry, entry.id)
+        self.assertEqual(fetched.custom_tags, tags)
+        # Update custom_tags
+        new_tags = {"genre": "RPG", "favorite": False, "hours": 42}
+        fetched.custom_tags = new_tags
+        self.session.commit()
+        refetched = self.session.get(CollectionEntry, entry.id)
+        self.assertEqual(refetched.custom_tags, new_tags)
 
     def test_entry_without_collection_or_game_fails(self):
         """Test that an entry without a collection or game fails to commit."""

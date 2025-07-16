@@ -4,7 +4,7 @@ This repository contains all services and shared code for the Gaming Library pro
 
 ## Monorepo Structure
 
-- `apps/auth-service/` — FastAPI microservice for authentication (signup, login, JWT, user info)
+- `apps/auth_service/` — FastAPI microservice for authentication (signup, login, JWT, user info)
 - `db/` — Shared SQLAlchemy models and DB migrations
 - `gateway/` — (Planned) API gateway and orchestration
 - `migrations/` — Alembic migration scripts
@@ -26,7 +26,7 @@ poetry install
 
 ### 3. Run Services
 
-- See `apps/auth-service/README.md` for running the auth service.
+- See `apps/auth_service/README.md` for running the auth service.
 
 ### 4. Run Tests
 
@@ -36,13 +36,13 @@ poetry install
   ```
 - **Auth service:**
   ```sh
-  cd apps/auth-service
+  cd apps/auth_service
   PYTHONPATH=../.. poetry run python -m unittest discover -s tests
   ```
 
 ### 5. Linting & Formatting
 
-- Pre-commit hooks run Black, Flake8, and Pylint for both DB and auth-service code.
+- Pre-commit hooks run Black, Flake8, and Pylint for both DB and auth_service code.
 - To run manually:
   ```sh
   poetry run pre-commit run --all-files

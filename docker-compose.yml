@@ -15,10 +15,10 @@ services:
       timeout: 5s
       retries: 5
 
-  auth-service:
+  auth_service:
     build:
-      context: ./apps/auth-service
-    container_name: auth-service
+      context: ./apps/auth_service
+    container_name: auth_service
     restart: unless-stopped
     ports:
       - "8001:8000"

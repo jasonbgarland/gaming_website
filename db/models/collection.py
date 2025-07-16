@@ -6,15 +6,17 @@ Defines the Collection and CollectionEntry classes and their relationships.
 
 from sqlalchemy import (
     Column,
-    Integer,
-    String,
     DateTime,
     ForeignKey,
+    Integer,
+    String,
     Text,
     UniqueConstraint,
     func,
 )
+from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import relationship
+
 from .user import Base
 
 
@@ -31,6 +33,7 @@ class Collection(Base):
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
     name: str = Column(String, nullable=False)
+    description: str = Column(Text, nullable=True)
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),  # pylint: disable=not-callable
@@ -77,6 +80,7 @@ class CollectionEntry(Base):
     status: str = Column(String, nullable=True)  # e.g., 'playing', 'completed'
     rating: int = Column(Integer, nullable=True)  # 1-10
     notes: str = Column(Text, nullable=True)
+    custom_tags = Column(JSON, nullable=True)  # list of strings
     added_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),  # pylint: disable=not-callable
