@@ -18,6 +18,13 @@ logging.basicConfig(
 
 app = FastAPI(title="Game Data Service (IGDB)")
 
+
+@app.get("/health")
+def health_check() -> dict[str, str]:
+    """Health check endpoint for service monitoring."""
+    return {"status": "ok"}
+
+
 # Include IGDB API routes
 app.include_router(igdb.router, prefix="/igdb", tags=["IGDB"])
 

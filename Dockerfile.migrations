@@ -1,0 +1,35 @@
+# Start from an official Python image
+FROM python:3.12-slim
+
+# Set environment variables
+ENV POETRY_VERSION=1.8.2 \
+    PYTHONUNBUFFERED=1 \
+    POETRY_NO_INTERACTION=1
+
+# Install system dependencies
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y build-essential curl \
+    && pip install --upgrade pip \
+    && pip install "poetry==$POETRY_VERSION" \
+    && apt-get purge -y --auto-remove curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set workdir
+WORKDIR /app
+
+# Copy pyproject.toml and poetry.lock
+COPY pyproject.toml poetry.lock ./
+
+# Install dependencies
+RUN poetry install --no-root --only main
+
+# Copy the migrations and models
+COPY migrations ./migrations
+COPY alembic.ini ./
+COPY db ./db
+
+# Set PYTHONPATH
+ENV PYTHONPATH=/app
+
+# Run migrations when container starts
+CMD ["poetry", "run", "alembic", "upgrade", "head"]
