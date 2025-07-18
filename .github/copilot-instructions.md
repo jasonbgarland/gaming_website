@@ -37,6 +37,16 @@
 - Use xUnit style tests using the built in `unittest` module
 - Do not use the `__all__` pattern in `__init__.py` files; importing \* is not a preferred pattern in this project
 
+## Next.js Conventions
+
+- Use a `__tests__` folder inside each feature or route directory for unit and integration tests (e.g., `src/app/(auth)/login/__tests__/loginForm.test.tsx`).
+- Do not colocate test files with components; keep them in `__tests__` to avoid clutter and to match large-scale project practices.
+- Prefer TDD: write tests before implementing components.
+- Use Jest and React Testing Library for all React/Next.js component tests.
+- Use TypeScript for all components and tests.
+- Keep test file names descriptive (e.g., `loginForm.test.tsx`).
+- Document any new conventions in this section as the project evolves.
+
 ## Architecture & Patterns
 
 - Prefer composition over inheritance

@@ -159,12 +159,55 @@ Below is a set of incremental tasks you can tackle locally. Start with core piec
 | 6   | [x] | Backend (GameData) | Implement IGDB client wrapper with API key support                                | Tasks 4, 5     | 1–2 hours  |
 | 7   | [x] | Backend (Library)  | CRUD endpoints for user’s game collection                                         | Tasks 3, 5     | 2–3 hours  |
 | 8   | [x] | Frontend (Next.js) | Scaffold Next.js app, install Tailwind CSS                                        | Task 1         | 1 hour     |
-| 9   | [ ] | Frontend (UI)      | Build auth pages (signup/login) and state management                              | Tasks 5, 8     | 2–3 hours  |
+| 9   | [x] | Frontend (UI)      | Build auth pages (signup/login) and state management                              | Tasks 5, 8     | 2–3 hours  |
 | 10  | [ ] | Frontend (UI)      | Build game search page, call IGDB wrapper via API Gateway                         | Tasks 6, 8     | 2–3 hours  |
 | 11  | [ ] | Frontend (UI)      | Build “My Library” page, integrate add/remove calls                               | Tasks 7, 9, 10 | 2–3 hours  |
-| 12  | [ ] | Integration        | Wire up Next.js to FastAPI (CORS, proxy, env vars)                                | Tasks 5–11     | 1–2 hours  |
+| 12  | [x] | Integration        | Wire up Next.js to FastAPI (CORS, proxy, env vars)                                | Tasks 5–11     | 1–2 hours  |
 | 13  | [ ] | Demo & Validation  | Run local demo, manually test signup, search, add games                           | Tasks 1–12     | 1 hour     |
 | 14  | [ ] | Polish & Commit    | Write README sections on setup and usage; push to GitHub                          | Task 13        | 1–2 hours  |
+
+---
+
+## 🎯 Post-MVP Enhancements
+
+Once the core MVP is complete and demo-ready, these are valuable next steps to improve quality, reliability, and user experience:
+
+### 🧪 Testing & Quality Assurance
+
+| Priority | Task                                   | Estimated Effort | Benefits                                        |
+| -------- | -------------------------------------- | ---------------- | ----------------------------------------------- |
+| High     | **E2E Tests for Auth Flow**            | 2-3 hours        | Lock in working signup/login, catch regressions |
+| High     | **Integration Tests for Game Service** | 2-3 hours        | Validate IGDB API integration, caching behavior |
+| Medium   | **Component Unit Tests**               | 4-6 hours        | Faster feedback, easier refactoring             |
+| Medium   | **API Contract Tests**                 | 2-3 hours        | Prevent breaking changes between services       |
+
+### 🎨 User Experience Improvements
+
+| Priority | Task                                | Estimated Effort | Benefits                                    |
+| -------- | ----------------------------------- | ---------------- | ------------------------------------------- |
+| High     | **Dashboard/Profile Page**          | 3-4 hours        | Better post-login experience than home page |
+| High     | **Loading States & Error Handling** | 2-3 hours        | Professional feel, better user feedback     |
+| Medium   | **Game Search Autocomplete**        | 2-3 hours        | Faster game discovery                       |
+| Medium   | **Dark Mode Toggle**                | 1-2 hours        | Modern UI expectation                       |
+
+### 🔧 Developer Experience
+
+| Priority | Task                                 | Estimated Effort | Benefits                                |
+| -------- | ------------------------------------ | ---------------- | --------------------------------------- |
+| High     | **Docker Development Setup**         | 1-2 hours        | Consistent dev environment              |
+| Medium   | **API Documentation**                | 1-2 hours        | Easier onboarding, external integration |
+| Medium   | **VS Code Tasks for Common Actions** | 1 hour           | Streamlined workflow                    |
+
+### 🚀 Performance & Scalability
+
+| Priority | Task                               | Estimated Effort | Benefits                           |
+| -------- | ---------------------------------- | ---------------- | ---------------------------------- |
+| Medium   | **Redis Caching for IGDB**         | 2-3 hours        | Reduce API calls, faster responses |
+| Low      | **Database Indexing Optimization** | 1-2 hours        | Faster queries as data grows       |
+| Low      | **Image Optimization & CDN**       | 2-3 hours        | Faster page loads                  |
+
+**Total High Priority Items**: ~12-16 hours of focused work
+**Next Logical Sprint**: Focus on E2E tests + Dashboard page for a solid foundation
 
 ---
 

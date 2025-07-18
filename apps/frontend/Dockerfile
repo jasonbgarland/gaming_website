@@ -11,6 +11,15 @@ RUN \
 # Build the Next.js app
 FROM node:20-alpine AS builder
 WORKDIR /app
+
+# Accept build arguments for Next.js environment variables
+ARG NEXT_PUBLIC_AUTH_API_URL
+ARG NEXT_PUBLIC_GAME_API_URL
+
+# Set environment variables for build
+ENV NEXT_PUBLIC_AUTH_API_URL=$NEXT_PUBLIC_AUTH_API_URL
+ENV NEXT_PUBLIC_GAME_API_URL=$NEXT_PUBLIC_GAME_API_URL
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1

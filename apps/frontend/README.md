@@ -54,3 +54,27 @@ Configuration files:
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [Monorepo root README](../../README.md)
+
+## Environment Variables for API Endpoints
+
+This frontend uses environment variables to configure backend API endpoints for each microservice. These variables must be set in a `.env` file in the `apps/frontend` directory (or at the project root if using a monorepo-wide `.env`).
+
+**Required variables:**
+
+```
+NEXT_PUBLIC_AUTH_API_URL=http://localhost:8001
+NEXT_PUBLIC_GAME_API_URL=http://localhost:8002
+```
+
+- The `NEXT_PUBLIC_` prefix is required for variables to be available in the browser.
+- Update these URLs as needed for your local, staging, or production environments.
+- If you add an API gateway, you can update these variables to point to the gateway instead.
+
+**Example `.env` file:**
+
+```
+NEXT_PUBLIC_AUTH_API_URL=http://localhost:8001
+NEXT_PUBLIC_GAME_API_URL=http://localhost:8002
+```
+
+If these variables are not set, authentication and game-related features will not work.
