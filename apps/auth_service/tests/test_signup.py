@@ -13,7 +13,7 @@ class TestSignupEndpoint(TestDBBase):
     """Unit tests for the /signup endpoint."""
 
     def test_signup_success(self):
-        """Test /signup with valid data returns 201 and user info."""
+        """Test /signup with valid data returns 201 and JWT token."""
         payload = {
             "username": "testuser",
             "email": "testuser@example.com",
@@ -22,9 +22,9 @@ class TestSignupEndpoint(TestDBBase):
         response = self.client.post("/signup", json=payload)
         self.assertEqual(201, response.status_code)
         data = response.json()
-        self.assertEqual("testuser", data["username"])
-        self.assertEqual("testuser@example.com", data["email"])
-        self.assertNotIn("password", data)
+        self.assertIn("access_token", data)
+        self.assertEqual("bearer", data["token_type"])
+        self.assertTrue(data["access_token"])  # Ensure token is not empty
 
     def test_duplicate_username(self):
         """Test /signup with duplicate username returns 409."""

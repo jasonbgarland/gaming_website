@@ -71,13 +71,13 @@ def read_me(
 @router.post(
     "/signup",
     status_code=status.HTTP_201_CREATED,
-    response_model=UserOut,
-    summary="Register a new user",
+    response_model=TokenOut,
+    summary="Register a new user and return JWT access token",
     tags=["auth"],
     responses={409: {"description": "Username or email already exists"}},
 )
-def signup(user: UserSignup, db: Session = Depends(get_db)) -> UserOut:
-    """Register a new user account."""
+def signup(user: UserSignup, db: Session = Depends(get_db)) -> TokenOut:
+    """Register a new user account and return JWT access token."""
     # Check for duplicate username first
     existing_username = db.query(User).filter(User.username == user.username).first()
     if existing_username:
@@ -98,8 +98,11 @@ def signup(user: UserSignup, db: Session = Depends(get_db)) -> UserOut:
     db.commit()
     db.refresh(db_user)
     logger.info("New user signed up: %s", user.username)
-    # Return user info (excluding password)
-    return UserOut(username=db_user.username, email=db_user.email)
+
+    # Create and return JWT access token (like login)
+    access_token = create_access_token({"sub": db_user.username})
+    logger.info("JWT token created for new user: %s", user.username)
+    return TokenOut(access_token=access_token, token_type="bearer")
 
 
 @router.post(
