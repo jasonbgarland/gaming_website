@@ -6,11 +6,13 @@ Unit tests for SQLAlchemy models in the gaming library database.
 Covers User, Game, Collection, and CollectionEntry models, including relationships and constraints.
 """
 import unittest
+
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
-from db.models.user import User, Base
-from db.models.game import Game
+
 from db.models.collection import Collection, CollectionEntry
+from db.models.game import Game
+from db.models.user import Base, User
 
 
 class BaseModelTestCase(unittest.TestCase):
@@ -55,7 +57,7 @@ class TestGameModel(BaseModelTestCase):
 
     def test_create_game(self):
         """Test creating a game and verifying the ID is set."""
-        game = Game(title="Halo", platform="Xbox")
+        game = Game(name="Halo", platform="Xbox")
         self.session.add(game)
         self.session.commit()
         self.assertIsNotNone(game.id)
@@ -86,8 +88,8 @@ class TestCollectionModel(BaseModelTestCase):
 
     def test_duplicate_igdb_id(self):
         """Test that duplicate IGDB IDs are not allowed for games."""
-        game1 = Game(title="Game1", platform="PC", igdb_id=123)
-        game2 = Game(title="Game2", platform="PC", igdb_id=123)
+        game1 = Game(name="Game1", platform="PC", igdb_id=123)
+        game2 = Game(name="Game2", platform="PC", igdb_id=123)
         self.session.add_all([game1, game2])
         with self.assertRaises(Exception):
             self.session.commit()
@@ -167,7 +169,7 @@ class TestCollectionEntryModel(BaseModelTestCase):
     def test_entry_custom_tags_field(self):
         """Test creating and updating a collection entry with custom_tags."""
         user = User(email="tags@b.com", username="tags", hashed_password="pw")
-        game = Game(title="TagGame", platform="PC")
+        game = Game(name="TagGame", platform="PC")
         self.session.add_all([user, game])
         self.session.commit()
         collection = Collection(user_id=user.id, name="TagCol")
@@ -199,7 +201,7 @@ class TestCollectionEntryModel(BaseModelTestCase):
     def test_update_entry_fields(self):
         """Test updating fields on a collection entry."""
         user = User(email="update@b.com", username="update", hashed_password="pw")
-        game = Game(title="Update", platform="PC")
+        game = Game(name="Update", platform="PC")
         self.session.add_all([user, game])
         self.session.commit()
         collection = Collection(user_id=user.id, name="UpdateTest")
@@ -226,7 +228,7 @@ class TestCollectionEntryModel(BaseModelTestCase):
     def test_add_game_to_collection(self):
         """Test adding a game to a collection."""
         user = User(email="b@b.com", username="b", hashed_password="pw")
-        game = Game(title="Zelda", platform="Switch")
+        game = Game(name="Zelda", platform="Switch")
         self.session.add_all([user, game])
         self.session.commit()
         collection = Collection(user_id=user.id, name="Adventure")
@@ -241,7 +243,7 @@ class TestCollectionEntryModel(BaseModelTestCase):
     def test_unique_game_per_collection(self):
         """Test that a game can only appear once per collection."""
         user = User(email="c@b.com", username="c", hashed_password="pw")
-        game = Game(title="Mario", platform="Switch")
+        game = Game(name="Mario", platform="Switch")
         self.session.add_all([user, game])
         self.session.commit()
         collection = Collection(user_id=user.id, name="Platformers")
@@ -256,7 +258,7 @@ class TestCollectionEntryModel(BaseModelTestCase):
     def test_game_in_multiple_collections(self):
         """Test that a game can be in multiple collections."""
         user = User(email="d@b.com", username="d", hashed_password="pw")
-        game = Game(title="Celeste", platform="Switch")
+        game = Game(name="Celeste", platform="Switch")
         self.session.add_all([user, game])
         self.session.commit()
         c1 = Collection(user_id=user.id, name="Indies")
@@ -274,7 +276,7 @@ class TestCollectionEntryModel(BaseModelTestCase):
     def test_entry_optional_fields(self):
         """Test that optional fields on entry can be set and retrieved."""
         user = User(email="e@b.com", username="e", hashed_password="pw")
-        game = Game(title="Hades", platform="PC")
+        game = Game(name="Hades", platform="PC")
         self.session.add_all([user, game])
         self.session.commit()
         collection = Collection(user_id=user.id, name="Roguelikes")
@@ -303,7 +305,7 @@ class TestRelationships(BaseModelTestCase):
     def test_delete_collection_entry_only(self):
         """Test deleting a collection entry does not delete related collection or game."""
         user = User(email="delentry@b.com", username="delentry", hashed_password="pw")
-        game = Game(title="DeleteEntry", platform="PC")
+        game = Game(name="DeleteEntry", platform="PC")
         self.session.add_all([user, game])
         self.session.commit()
         collection = Collection(user_id=user.id, name="DeleteEntryTest")
@@ -321,7 +323,7 @@ class TestRelationships(BaseModelTestCase):
     def test_relationship_navigation(self):
         """Test navigating relationships between user, collection, game, and entry."""
         user = User(email="rel@b.com", username="rel", hashed_password="pw")
-        game = Game(title="RelGame", platform="PC")
+        game = Game(name="RelGame", platform="PC")
         self.session.add_all([user, game])
         self.session.commit()
         collection = Collection(user_id=user.id, name="RelCol")
@@ -355,7 +357,7 @@ class TestRelationships(BaseModelTestCase):
     def test_cascade_delete_collection(self):
         """Test that deleting a collection cascades to its entries."""
         user = User(email="f@b.com", username="f", hashed_password="pw")
-        game = Game(title="Portal", platform="PC")
+        game = Game(name="Portal", platform="PC")
         self.session.add_all([user, game])
         self.session.commit()
         collection = Collection(user_id=user.id, name="Puzzle")
@@ -371,7 +373,7 @@ class TestRelationships(BaseModelTestCase):
     def test_cascade_delete_user(self):
         """Test that deleting a user cascades to their collections and entries."""
         user = User(email="g@b.com", username="g", hashed_password="pw")
-        game = Game(title="Doom", platform="PC")
+        game = Game(name="Doom", platform="PC")
         self.session.add_all([user, game])
         self.session.commit()
         collection = Collection(user_id=user.id, name="Shooters")
@@ -388,7 +390,7 @@ class TestRelationships(BaseModelTestCase):
     def test_cascade_delete_game(self):
         """Test that deleting a game cascades to its collection entries."""
         user = User(email="h@b.com", username="h", hashed_password="pw")
-        game = Game(title="Tetris", platform="Game Boy")
+        game = Game(name="Tetris", platform="Game Boy")
         self.session.add_all([user, game])
         self.session.commit()
         collection = Collection(user_id=user.id, name="Classics")
