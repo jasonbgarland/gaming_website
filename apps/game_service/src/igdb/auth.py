@@ -5,6 +5,7 @@ Handles caching and automatic refresh of the IGDB API access token.
 
 import os
 import time
+
 import httpx
 from dotenv import load_dotenv
 
@@ -15,14 +16,28 @@ class IGDBAuth:
     """
     Handles IGDB OAuth token retrieval and refresh.
     Caches the token in memory and refreshes when expired.
+    Singleton pattern to ensure only one instance is used.
     """
 
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __init__(self) -> None:
-        self.client_id = os.getenv("IGDB_CLIENT_ID")
-        self.client_secret = os.getenv("IGDB_CLIENT_SECRET")
-        self.token_url = "https://id.twitch.tv/oauth2/token"
-        self._access_token = None
-        self._expires_at = 0
+        # Only initialize attributes if they haven't been set (singleton)
+        if not hasattr(self, "client_id"):
+            self.client_id = os.getenv("IGDB_CLIENT_ID")
+        if not hasattr(self, "client_secret"):
+            self.client_secret = os.getenv("IGDB_CLIENT_SECRET")
+        if not hasattr(self, "token_url"):
+            self.token_url = "https://id.twitch.tv/oauth2/token"
+        if not hasattr(self, "_access_token"):
+            self._access_token = None
+        if not hasattr(self, "_expires_at"):
+            self._expires_at = 0
 
     def get_token(self) -> str:
         """Returns a valid access token, refreshing if needed."""
