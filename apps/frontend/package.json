@@ -7,12 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "test:integration": "INTEGRATION_TESTS=true jest --testNamePattern='integration'",
+    "test:unit": "jest --testPathIgnorePatterns='integration'"
   },
   "dependencies": {
     "next": "15.4.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "swr": "^2.3.4",
     "zustand": "^5.0.6"
   },
   "devDependencies": {

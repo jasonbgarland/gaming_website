@@ -1,5 +1,12 @@
 # Frontend (Next.js)
 
+## Features
+
+- **Game Search:** Search for games by title, platform, or year on the `/games/search` page, powered by live IGDB data
+- **Responsive UI:** Built with Next.js and Tailwind CSS
+- **Authentication:** User login and signup (if enabled)
+- **Microservices Integration:** Connects to backend services via API Gateway
+
 This is the main web frontend for the Gaming Library Microservices monorepo, bootstrapped with [Next.js](https://nextjs.org) and [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app). Tailwind CSS is pre-installed and ready to use.
 
 > **Note:** This project lives in a monorepo. See the root `README.md` for overall architecture and development workflow.
@@ -46,6 +53,54 @@ Configuration files:
 
 - This frontend lives in `apps/frontend`.
 - See the root `README.md` for backend, database, and shared code details.
+
+## Testing
+
+This project uses Jest and React Testing Library for testing. We have two types of tests:
+
+### Unit Tests
+
+Fast tests that don't require external dependencies (backend, database, etc.):
+
+```bash
+npm test                # Run all unit tests (default)
+npm run test:unit       # Explicitly run unit tests only
+```
+
+### Integration Tests
+
+Tests that require the full stack to be running (backend services, database, etc.):
+
+```bash
+npm run test:integration    # Run integration tests only
+```
+
+**Important:** Integration tests require:
+
+- Backend services to be running (auth_service, game_service)
+- Database to be accessible
+- IGDB API credentials configured
+- Environment variables properly set
+
+### Running All Tests
+
+To run both unit and integration tests:
+
+```bash
+INTEGRATION_TESTS=true npm test
+```
+
+### Test File Conventions
+
+- Unit tests: `*.test.tsx` or `*.test.ts`
+- Integration tests: `*.integration.test.tsx` (automatically skipped in regular test runs)
+- Tests are located in `__tests__` folders alongside components
+
+### CI/CD Considerations
+
+- Unit tests run automatically in CI/CD pipelines
+- Integration tests should be run in a separate stage with full stack deployment
+- Use `npm test` for fast feedback during development
 
 ## Learn More
 
