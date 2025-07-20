@@ -190,6 +190,93 @@ class IGDBClient:
             cache.set(cache_key, mapped, ttl=300)  # 5 minutes
         return mapped
 
+    def _format_image_url(
+        self, url: str | None, size: str = "cover_small"
+    ) -> str | None:
+        """
+        Format IGDB image URL to include https protocol and specified size.
+
+        Args:
+            url: Image URL from IGDB (e.g., '//images.igdb.com/...')
+            size: Image size ('thumb', 'cover_small', 'cover_big', '720p')
+
+        Returns:
+            Properly formatted URL with https protocol and specified size, or None if url is None
+        """
+        if not url:
+            return None
+        if url.startswith("//"):
+            formatted_url = f"https:{url}"
+            # Replace any existing size with the requested size
+            size_map = {
+                "thumb": "t_thumb",
+                "cover_small": "t_cover_small",
+                "cover_big": "t_cover_big",
+                "720p": "t_720p",
+            }
+            target_size = size_map.get(size, "t_cover_small")
+
+            # Replace existing size or add if none exists
+            for old_size in size_map.values():
+                if old_size in formatted_url:
+                    formatted_url = formatted_url.replace(old_size, target_size)
+                    break
+            else:
+                # No size found, add it before the filename
+                parts = formatted_url.split("/")
+                if len(parts) >= 2:
+                    filename = parts[-1]
+                    parts[-1] = f"{target_size}/{filename}"
+                    formatted_url = "/".join(parts)
+
+            return formatted_url
+        return url
+
+    def _get_image_urls(self, formatted_url: str | None) -> dict:
+        """
+        Generate multiple image URLs for responsive display from a formatted IGDB URL.
+
+        Args:
+            formatted_url: Already formatted URL like
+                "https://images.igdb.com/igdb/image/upload/t_cover_small/co67oa.jpg"
+
+        Returns:
+            Dict with different image sizes for responsive use
+        """
+        print(f"_get_image_urls called with: {formatted_url}")  # Debug
+
+        if not formatted_url or "images.igdb.com" not in formatted_url:
+            print("Returning empty - no valid URL")  # Debug
+            return {}
+
+        # Extract image ID from URL like:
+        # https://images.igdb.com/igdb/image/upload/t_cover_small/co67oa.jpg
+        # We want to get "co67oa" from this URL
+        try:
+            # Split by "/" and get the last part (filename)
+            filename = formatted_url.split("/")[-1]  # "co67oa.jpg"
+
+            # Remove the extension to get image ID
+            if filename.endswith(".jpg"):
+                image_id = filename[:-4]  # "co67oa"
+            else:
+                image_id = filename
+
+            # Build the responsive URLs
+            base_url = "https://images.igdb.com/igdb/image/upload"
+            result = {
+                "thumb": f"{base_url}/t_thumb/{image_id}.jpg",
+                "small": f"{base_url}/t_cover_small/{image_id}.jpg",
+                "medium": f"{base_url}/t_cover_big/{image_id}.jpg",
+                "large": f"{base_url}/t_720p/{image_id}.jpg",
+            }
+            print(f"Generated responsive URLs: {result}")  # Debug
+            return result
+        except (IndexError, ValueError, AttributeError) as e:
+            print(f"Exception in _get_image_urls: {e}")  # Debug
+            # If anything goes wrong, return empty dict
+            return {}
+
     def _map_game(self, game: dict) -> dict:
         """
         Map IGDB API game dict to GameOut-compatible dict.
@@ -200,12 +287,39 @@ class IGDBClient:
         Returns:
             dict: Mapped game dictionary for API response.
         """
+        cover_data = game.get("cover")
+        raw_cover_url = cover_data.get("url") if cover_data else None
+
+        # Format the cover URL for display - use medium size for better quality on large monitors
+        formatted_cover_url = (
+            self._format_image_url(raw_cover_url, "cover_big")
+            if raw_cover_url
+            else None
+        )
+
+        # Generate responsive image URLs for better display on large monitors
+        responsive_images = {}
+        if formatted_cover_url:
+            # Extract image ID from the formatted URL for responsive sizing
+            if "images.igdb.com/igdb/image/upload/" in formatted_cover_url:
+                try:
+                    filename = formatted_cover_url.split("/")[-1]
+                    image_id = filename[:-4] if filename.endswith(".jpg") else filename
+                    base_url = "https://images.igdb.com/igdb/image/upload"
+                    responsive_images = {
+                        "thumb": f"{base_url}/t_thumb/{image_id}.jpg",
+                        "small": f"{base_url}/t_cover_small/{image_id}.jpg",
+                        "medium": f"{base_url}/t_cover_big/{image_id}.jpg",
+                        "large": f"{base_url}/t_720p/{image_id}.jpg",
+                    }
+                except (IndexError, ValueError, AttributeError):
+                    responsive_images = {}
+
         return {
             "id": game["id"],
             "name": game.get("name"),
-            "cover_url": (
-                game.get("cover", {}).get("url") if game.get("cover") else None
-            ),
+            "cover_url": formatted_cover_url,
+            "cover_images": responsive_images,
             "summary": game.get("summary"),
             "release_date": game.get("first_release_date"),
             "genres": (

@@ -4,10 +4,11 @@ Integration tests for IGDB API endpoints using real IGDB credentials and API.
 
 import os
 import unittest
+
 from fastapi.testclient import TestClient
-from src.main import app
 from src.igdb.auth import IGDBAuth
 from src.igdb.client import IGDBClient
+from src.main import app
 
 
 class TestIGDBIntegration(unittest.TestCase):
@@ -72,7 +73,7 @@ class TestIGDBIntegration(unittest.TestCase):
         self.assertIn("name", data[0])
 
     def test_search_games_real_api(self):
-        """Test IGDBClient.search_games with real IGDB API."""
+        """Test IGDBClient.search_games with real IGDB API and cover_images generation."""
         # Only run if explicitly enabled and credentials are present
         if not os.getenv("RUN_IGDB_INTEGRATION"):
             self.skipTest("Set RUN_IGDB_INTEGRATION=1 to run this test")
@@ -88,10 +89,44 @@ class TestIGDBIntegration(unittest.TestCase):
         self.assertIn("id", game)
         self.assertIn("name", game)
         self.assertIn("cover_url", game)
+        self.assertIn("cover_images", game)
         self.assertIn("summary", game)
         self.assertIn("release_date", game)
         self.assertIn("genres", game)
         self.assertIn("platforms", game)
+
+        # Test cover_images responsive functionality
+        if game["cover_url"]:
+            print(f"Cover URL: {game['cover_url']}")
+            print(f"Cover Images: {game['cover_images']}")
+
+            # Should have responsive image URLs
+            cover_images = game["cover_images"]
+            self.assertIsInstance(cover_images, dict)
+
+            if cover_images:  # Only test if cover_images is populated
+                self.assertIn("thumb", cover_images)
+                self.assertIn("small", cover_images)
+                self.assertIn("medium", cover_images)
+                self.assertIn("large", cover_images)
+
+                # Each URL should be properly formatted
+                for url in cover_images.values():
+                    self.assertIsInstance(url, str)
+                    self.assertTrue(url.startswith("https://images.igdb.com"))
+                    self.assertTrue(url.endswith(".jpg"))
+
+                # Verify different sizes have different URLs
+                urls = list(cover_images.values())
+                self.assertEqual(
+                    len(set(urls)), len(urls), "All image URLs should be unique"
+                )
+
+                # Check specific size mappings
+                self.assertIn("t_thumb", cover_images["thumb"])
+                self.assertIn("t_cover_small", cover_images["small"])
+                self.assertIn("t_cover_big", cover_images["medium"])
+                self.assertIn("t_720p", cover_images["large"])
 
     def test_search_endpoint_real_api(self):
         """Test /igdb/search endpoint with real IGDB API."""

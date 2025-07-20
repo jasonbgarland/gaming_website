@@ -37,6 +37,17 @@ class PlatformOut(BaseModel):
 # pylint: disable=too-few-public-methods
 
 
+class CoverImages(BaseModel):
+    """
+    Pydantic schema for different sizes of cover images.
+    """
+
+    thumb: str | None = Field(None, description="Thumbnail size image URL (90x128).")
+    small: str | None = Field(None, description="Small size image URL (227x320).")
+    medium: str | None = Field(None, description="Medium size image URL (264x374).")
+    large: str | None = Field(None, description="Large size image URL (1280x720).")
+
+
 class GameOut(BaseModel):
     """
     Pydantic schema for a game returned by the IGDB API.
@@ -45,6 +56,9 @@ class GameOut(BaseModel):
     id: int = Field(..., description="Unique game ID from IGDB.")
     name: str = Field(..., description="Game title.")
     cover_url: str | None = Field(None, description="URL to the game's cover image.")
+    cover_images: CoverImages | None = Field(
+        None, description="Multiple sizes of cover images."
+    )
     summary: str | None = Field(
         None, description="Short summary or description of the game."
     )

@@ -6,6 +6,7 @@ Initializes the FastAPI app and includes IGDB API routes.
 import logging
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from src.api import igdb
 from src.api.collection_entry import router as collection_entry_router
 from src.api.collections import router as collections_router
@@ -17,6 +18,15 @@ logging.basicConfig(
 )
 
 app = FastAPI(title="Game Data Service (IGDB)")
+
+# Add CORS middleware to allow frontend access
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health")
