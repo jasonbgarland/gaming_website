@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 /**
  * Custom hook to handle user logout.
- * Clears auth state, removes token from localStorage, and redirects to login.
+ * Clears auth state (Zustand will handle localStorage persistence).
  */
 export function useLogout() {
   const logout = useAuthStore((state) => state.logout);
@@ -15,11 +15,8 @@ export function useLogout() {
    * Handles the logout process
    */
   const handleLogout = () => {
-    // Clear auth state in Zustand store
+    // Clear auth state in Zustand store (this will also clear localStorage via persist middleware)
     logout();
-
-    // Clear JWT token from localStorage
-    localStorage.removeItem("token");
 
     // Redirect to login page
     router.push("/login");

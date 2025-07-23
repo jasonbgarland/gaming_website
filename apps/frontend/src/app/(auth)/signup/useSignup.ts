@@ -77,9 +77,7 @@ export function useSignup() {
         return;
       }
 
-      // Store JWT token
-      localStorage.setItem("token", data.access_token);
-      // Update global auth state
+      // Update global auth state (Zustand will handle localStorage persistence)
       login(data.access_token);
       // Redirect user to home page after successful signup
       router.push("/");

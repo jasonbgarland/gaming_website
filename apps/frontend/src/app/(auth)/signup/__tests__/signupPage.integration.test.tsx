@@ -101,12 +101,11 @@ describe("SignupPage integration", () => {
         })
       );
     });
-    await waitFor(() => {
-      expect(mockSetItem).toHaveBeenCalledWith("token", "fake-jwt-token");
-    });
+    // Verify store login was called with correct token
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledWith("fake-jwt-token");
     });
+    // Verify redirect happened
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/");
     });
@@ -138,7 +137,6 @@ describe("SignupPage integration", () => {
     await waitFor(() => {
       expect(screen.getByText(/invalid|error|duplicate/i)).toBeInTheDocument();
     });
-    expect(mockSetItem).not.toHaveBeenCalled();
   });
 
   it("shows error on weak password (422)", async () => {
@@ -153,7 +151,6 @@ describe("SignupPage integration", () => {
     await waitFor(() => {
       expect(screen.getByText(/invalid|error|weak/i)).toBeInTheDocument();
     });
-    expect(mockSetItem).not.toHaveBeenCalled();
   });
 
   it("shows error on network error (fetch rejects)", async () => {
@@ -168,7 +165,6 @@ describe("SignupPage integration", () => {
     await waitFor(() => {
       expect(screen.getByText(/network|error/i)).toBeInTheDocument();
     });
-    expect(mockSetItem).not.toHaveBeenCalled();
   });
 
   it("form fields stay filled after error", async () => {

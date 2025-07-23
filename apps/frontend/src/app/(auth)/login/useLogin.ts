@@ -55,9 +55,7 @@ export function useLogin() {
         setError("Unexpected error: No token received from server.");
         return;
       }
-      // Store JWT token
-      localStorage.setItem("token", data.token);
-      // Update global auth state
+      // Update global auth state (Zustand will handle localStorage persistence)
       login(data.token, data.user);
       // Redirect user to dashboard or home
       router.push("/");

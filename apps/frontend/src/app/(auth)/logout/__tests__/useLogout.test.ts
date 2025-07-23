@@ -15,15 +15,6 @@ jest.mock("next/navigation", () => ({
   })),
 }));
 
-// Mock localStorage
-const mockRemoveItem = jest.fn();
-Object.defineProperty(window, "localStorage", {
-  value: {
-    removeItem: mockRemoveItem,
-  },
-  writable: true,
-});
-
 const mockUseAuthStore = useAuthStore as jest.MockedFunction<
   typeof useAuthStore
 >;
@@ -64,13 +55,12 @@ describe("useLogout", () => {
     expect(typeof result.current.handleLogout).toBe("function");
   });
 
-  it("should call store logout and clear localStorage when handleLogout is called", () => {
+  it("should call store logout when handleLogout is called", () => {
     const { result } = renderHook(() => useLogout());
 
     result.current.handleLogout();
 
     expect(mockLogout).toHaveBeenCalledTimes(1);
-    expect(mockRemoveItem).toHaveBeenCalledWith("token");
   });
 
   it("should redirect to login page after logout", () => {
@@ -88,7 +78,6 @@ describe("useLogout", () => {
     result.current.handleLogout();
 
     expect(mockLogout).toHaveBeenCalledTimes(2);
-    expect(mockRemoveItem).toHaveBeenCalledTimes(2);
     expect(mockPush).toHaveBeenCalledTimes(2);
   });
 });

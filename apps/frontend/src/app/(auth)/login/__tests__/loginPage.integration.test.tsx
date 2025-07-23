@@ -50,17 +50,12 @@ Object.defineProperty(window, "localStorage", {
   writable: true,
 });
 
-// Also add a spy on localStorage.setItem directly
-const localStorageSetItemSpy = jest.spyOn(Storage.prototype, "setItem");
-localStorageSetItemSpy.mockImplementation(mockSetItem);
-
 beforeEach(() => {
   // Reset all mocks before each test
   mockApi.mockReset();
   mockSetItem.mockReset();
   mockLogin.mockReset();
   mockPush.mockReset();
-  localStorageSetItemSpy.mockReset();
 
   // Clear any previous mock implementations
   mockApi.mockClear();
@@ -117,12 +112,11 @@ describe("LoginPage integration", () => {
         })
       );
     });
-    await waitFor(() => {
-      expect(mockSetItem).toHaveBeenCalledWith("token", "fake-jwt-token");
-    });
+    // Verify store login was called with correct token
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledWith("fake-jwt-token", undefined);
     });
+    // Verify redirect happened
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/");
     });
@@ -142,7 +136,7 @@ describe("LoginPage integration", () => {
         screen.getByText(/invalid credentials|unexpected|error/i)
       ).toBeInTheDocument();
     });
-    expect(mockSetItem).not.toHaveBeenCalled();
+
     expect(mockLogin).not.toHaveBeenCalled();
     expect(mockPush).not.toHaveBeenCalled();
   });
@@ -161,7 +155,7 @@ describe("LoginPage integration", () => {
         screen.getByText(/invalid credentials|unexpected|error/i)
       ).toBeInTheDocument();
     });
-    expect(mockSetItem).not.toHaveBeenCalled();
+
     expect(mockLogin).not.toHaveBeenCalled();
     expect(mockPush).not.toHaveBeenCalled();
   });
@@ -176,7 +170,7 @@ describe("LoginPage integration", () => {
     await waitFor(() => {
       expect(screen.getByText(/network|unexpected|error/i)).toBeInTheDocument();
     });
-    expect(mockSetItem).not.toHaveBeenCalled();
+
     expect(mockLogin).not.toHaveBeenCalled();
     expect(mockPush).not.toHaveBeenCalled();
   });
@@ -206,15 +200,8 @@ describe("LoginPage integration", () => {
     });
   });
 
-  it("does not re-login if token already in localStorage (rehydration)", async () => {
-    // Simulate token already present
-    mockSetItem.mockClear();
-    localStorageMock.getItem.mockReturnValueOnce("existing-token");
-    render(<LoginPage />);
-    // Should not call login or push
-    expect(mockLogin).not.toHaveBeenCalled();
-    expect(mockPush).not.toHaveBeenCalled();
-  });
+  // Note: Zustand persistence now handles token rehydration automatically
+  // so we don't need a specific test for localStorage rehydration
 
   it("shows error message on failed login", async () => {
     mockApi.mockResolvedValueOnce({ ok: false });
