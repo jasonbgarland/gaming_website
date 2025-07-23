@@ -1,0 +1,99 @@
+# Complete development configuration with all services
+# Usage: docker-compose -f docker-compose.complete-dev.yml up
+services:
+  db:
+    image: postgres:17.5
+    container_name: gameslib-db-dev
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db-migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrations
+    container_name: db-migrations-dev
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  auth_service:
+    build:
+      context: .
+      dockerfile: apps/auth_service/Dockerfile
+    container_name: auth_service-dev
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      db-migrations:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}"
+      SECRET_KEY: "${SECRET_KEY:-change-this-secret}"
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+
+  game_service:
+    build:
+      context: .
+      dockerfile: apps/game_service/Dockerfile
+    container_name: game_service-dev
+    restart: unless-stopped
+    ports:
+      - "8002:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      db-migrations:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      GAME_SERVICE_DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}"
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile.dev
+    container_name: frontend-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/frontend:/app
+      - /app/node_modules
+      - /app/.next
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_AUTH_API_URL=${NEXT_PUBLIC_AUTH_API_URL}
+      - NEXT_PUBLIC_GAME_API_URL=${NEXT_PUBLIC_GAME_API_URL}
+      - NEXT_PUBLIC_GAME_SERVICE_URL=${NEXT_PUBLIC_GAME_SERVICE_URL}
+    command: npm run dev
+    depends_on:
+      auth_service:
+        condition: service_started
+      game_service:
+        condition: service_started
+
+volumes:
+  db_data_dev:

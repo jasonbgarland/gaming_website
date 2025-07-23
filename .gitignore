@@ -39,7 +39,8 @@ htmlcov/
 coverage.xml
 
 # Local developer task notes (do not commit)
-TASK_PLAN.MD
+TASK*.md
+TASK*.MD
 
 # Misc
 *.sqlite3

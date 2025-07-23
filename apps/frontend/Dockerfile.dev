@@ -1,0 +1,30 @@
+# Development Dockerfile for faster builds
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm install --frozen-lockfile; \
+  fi
+
+# Development stage - no build, just run dev server
+FROM node:20-alpine AS development
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json ./
+
+# Accept build arguments for Next.js environment variables
+ARG NEXT_PUBLIC_AUTH_API_URL
+ARG NEXT_PUBLIC_GAME_API_URL
+ARG NEXT_PUBLIC_GAME_SERVICE_URL
+
+# Set environment variables
+ENV NEXT_PUBLIC_AUTH_API_URL=$NEXT_PUBLIC_AUTH_API_URL
+ENV NEXT_PUBLIC_GAME_API_URL=$NEXT_PUBLIC_GAME_API_URL
+ENV NEXT_PUBLIC_GAME_SERVICE_URL=$NEXT_PUBLIC_GAME_SERVICE_URL
+ENV NEXT_TELEMETRY_DISABLED=1
+
+EXPOSE 3000
+CMD ["npm", "run", "dev"]

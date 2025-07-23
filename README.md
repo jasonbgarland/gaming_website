@@ -12,6 +12,7 @@ This repository contains all services and shared code for the Gaming Library pro
 - `gateway/` — (Planned) API gateway and orchestration
 - `migrations/` — Alembic migration scripts
 - `docker-compose.yml` — Docker Compose configuration for all services
+- `docker-compose.dev.yml` — Development override with volume mounts and hot reloading for all services
 - `.pre-commit-config.yaml` — Linting and formatting hooks for all Python code
 
 ## Quick Start with Docker Compose
@@ -27,8 +28,20 @@ cp .env.example .env
 
 ### 2. Run All Services with Docker Compose
 
+#### For Development (Recommended)
+
 ```sh
-# Build and start all services (PostgreSQL, auth service, game service, frontend)
+# Fast development with hot reloading for all services
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+
+# Or run in detached mode
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+```
+
+#### For Production Testing
+
+```sh
+# Production-like build for all services
 docker-compose up --build
 
 # Or run in detached mode
@@ -38,19 +51,42 @@ docker-compose up -d --build
 This will start:
 
 - **PostgreSQL Database** on port 5432
-- **Auth Service** on port 8000
-- **Game Service** on port 8001
+- **Auth Service** on port 8001
+- **Game Service** on port 8002
 - **Frontend** on port 3000
+
+**Development Benefits:**
+
+- ⚡ **Hot Reloading**: All services (frontend + backend) update instantly on code changes
+- 🔄 **Fast Iteration**: Volume mounts sync your local files to containers in real-time
+- 📦 **Auto-Restart**: Python services automatically restart when you modify code
+- 🚀 **No Rebuilds**: Make changes without waiting for Docker image rebuilds
 
 ### 3. Access the Application
 
 - **Frontend**: http://localhost:3000
-- **Auth Service API**: http://localhost:8000/docs (Swagger UI)
-- **Game Service API**: http://localhost:8001/docs (Swagger UI)
+- **Auth Service API**: http://localhost:8001/docs (Swagger UI)
+- **Game Service API**: http://localhost:8002/docs (Swagger UI)
 
 ## Development Setup (Local)
 
-For local development without Docker:
+For local development without Docker, or if you prefer running services individually:
+
+### Option A: Docker Development (Recommended)
+
+Use the development Docker setup for the fastest workflow:
+
+```sh
+# Start all services with development optimizations
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+# Make changes to any service code - they'll appear instantly!
+# Frontend: Hot reloading with Next.js dev server
+# Backend: Auto-restart with uvicorn --reload
+# Shared code: Live updates across all services
+```
+
+### Option B: Local Development Setup
 
 ### 1. Install Dependencies
 

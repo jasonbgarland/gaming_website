@@ -9,7 +9,7 @@ ENV POETRY_VERSION=1.8.2 \
 
 # Install system dependencies
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y build-essential curl \
+    && apt-get install --no-install-recommends -y build-essential curl libpq-dev \
     && pip install --upgrade pip \
     && pip install "poetry==$POETRY_VERSION" \
     && apt-get purge -y --auto-remove curl \

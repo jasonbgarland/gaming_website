@@ -1,0 +1,37 @@
+# Development override for faster builds
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  frontend:
+    build:
+      context: apps/frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./apps/frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+
+  auth_service:
+    volumes:
+      # Mount source code for hot reloading
+      - ./apps/auth_service/src:/app/apps/auth_service/src
+      - ./db:/app/db
+      - ./shared:/app/shared
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1 # Prevent .pyc files in containers
+      - PYTHONUNBUFFERED=1 # Real-time logging
+    command: poetry run uvicorn apps.auth_service.src.main:app --host 0.0.0.0 --port 8000 --reload
+
+  game_service:
+    volumes:
+      # Mount source code for hot reloading
+      - ./apps/game_service/src:/app/apps/game_service/src
+      - ./db:/app/db
+      - ./shared:/app/shared
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1 # Prevent .pyc files in containers
+      - PYTHONUNBUFFERED=1 # Real-time logging
+    command: poetry run uvicorn apps.game_service.src.main:app --host 0.0.0.0 --port 8000 --reload

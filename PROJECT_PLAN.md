@@ -160,7 +160,7 @@ Below is a set of incremental tasks you can tackle locally. Start with core piec
 | 7   | [x] | Backend (Library)  | CRUD endpoints for user’s game collection                                         | Tasks 3, 5     | 2–3 hours  |
 | 8   | [x] | Frontend (Next.js) | Scaffold Next.js app, install Tailwind CSS                                        | Task 1         | 1 hour     |
 | 9   | [x] | Frontend (UI)      | Build auth pages (signup/login) and state management                              | Tasks 5, 8     | 2–3 hours  |
-| 10  | [ ] | Frontend (UI)      | Build game search page, call IGDB wrapper via API Gateway                         | Tasks 6, 8     | 2–3 hours  |
+| 10  | [x] | Frontend (UI)      | Build game search page, call IGDB wrapper via API Gateway                         | Tasks 6, 8     | 2–3 hours  |
 | 11  | [ ] | Frontend (UI)      | Build “My Library” page, integrate add/remove calls                               | Tasks 7, 9, 10 | 2–3 hours  |
 | 12  | [x] | Integration        | Wire up Next.js to FastAPI (CORS, proxy, env vars)                                | Tasks 5–11     | 1–2 hours  |
 | 13  | [ ] | Demo & Validation  | Run local demo, manually test signup, search, add games                           | Tasks 1–12     | 1 hour     |

@@ -1,6 +1,7 @@
 # Production-ready Dockerfile for Next.js (with Tailwind CSS)
 FROM node:20-alpine AS deps
 WORKDIR /app
+# Copy package files first for better layer caching
 COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
 RUN \
   if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
@@ -15,20 +16,25 @@ WORKDIR /app
 # Accept build arguments for Next.js environment variables
 ARG NEXT_PUBLIC_AUTH_API_URL
 ARG NEXT_PUBLIC_GAME_API_URL
+ARG NEXT_PUBLIC_GAME_SERVICE_URL
 
 # Set environment variables for build
 ENV NEXT_PUBLIC_AUTH_API_URL=$NEXT_PUBLIC_AUTH_API_URL
 ENV NEXT_PUBLIC_GAME_API_URL=$NEXT_PUBLIC_GAME_API_URL
+ENV NEXT_PUBLIC_GAME_SERVICE_URL=$NEXT_PUBLIC_GAME_SERVICE_URL
 
 COPY --from=deps /app/node_modules ./node_modules
+# Copy package.json first for better caching
+COPY package.json ./
+# Copy source code last (changes most frequently)
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # Production image, copy built assets and run Next.js
 FROM node:20-alpine AS runner
 WORKDIR /app
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # If you use a custom next.config.js, uncomment below
 # COPY --from=builder /app/next.config.js ./
