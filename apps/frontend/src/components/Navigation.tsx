@@ -51,6 +51,9 @@ const Navigation: React.FC = () => {
               {user?.email && (
                 <span style={{ marginRight: "1rem" }}>{user.email}</span>
               )}
+              <Link href="/library" style={{ textDecoration: "none" }}>
+                My Library
+              </Link>
               <LogoutButton />
             </>
           )}
