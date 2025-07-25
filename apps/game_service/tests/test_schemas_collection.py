@@ -9,7 +9,7 @@ from datetime import UTC, datetime
 from pydantic import ValidationError
 
 # Import schemas
-from apps.game_service.src.schemas.collection import (
+from src.schemas.collection import (
     CollectionCreate,
     CollectionOut,
     CollectionUpdate,

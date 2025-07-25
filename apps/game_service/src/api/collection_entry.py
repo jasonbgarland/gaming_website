@@ -6,23 +6,23 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-
-from apps.game_service.src.api.dependencies import get_current_user, get_igdb_auth
-from apps.game_service.src.core.database import get_db
-from apps.game_service.src.igdb.client import IGDBClient
-from apps.game_service.src.schemas.collection_entry import (
+from src.api.dependencies import get_current_user, get_igdb_auth
+from src.core.database import get_db
+from src.igdb.client import IGDBClient
+from src.schemas.collection_entry import (
     CollectionEntryCreate,
     CollectionEntryOut,
     CollectionEntryUpdate,
 )
-from apps.game_service.src.services.collection_entry_service import (
+
+from apps.game_service.src.services.collection_entry_service import (  # pylint: disable=wrong-import-order
     CollectionEntryNotFoundError,
     CollectionEntryPermissionError,
     CollectionEntryService,
     DuplicateEntryError,
     GameNotFoundError,
 )
-from db.models.collection import Collection
+from db.models.collection import Collection  # pylint: disable=wrong-import-order
 
 router = APIRouter(
     prefix="/collections/{collection_id}/entries", tags=["CollectionEntry"]

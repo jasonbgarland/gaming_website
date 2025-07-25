@@ -4,10 +4,7 @@ Tests for the delete collection API endpoints.
 
 # pylint: disable=duplicate-code,wrong-import-order
 
-from apps.game_service.tests.api.collection.test_base import (
-    BaseCollectionAPITest,
-    generate_mock_jwt,
-)
+from tests.api.collection.test_base import BaseCollectionAPITest, generate_mock_jwt
 
 
 class TestDeleteCollection(BaseCollectionAPITest):
@@ -38,7 +35,7 @@ class TestDeleteCollection(BaseCollectionAPITest):
 
         # Create a second user and their collection
         self.other_user_id = 2
-        self.other_user_token = generate_mock_jwt(user_id="2")
+        self.other_user_token = generate_mock_jwt(username="otheruser")
         self.add_user(
             username="otheruser",
             email="otheruser@example.com",

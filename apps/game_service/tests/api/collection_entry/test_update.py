@@ -6,12 +6,13 @@ Tests for the PUT (update) collection entry API endpoints.
 
 from unittest.mock import Mock, patch
 
-from apps.game_service.tests.api.collection_entry.test_base import (
+from tests.api.collection_entry.test_base import (
     BaseCollectionEntryAPITest,
     generate_mock_jwt,
 )
-from apps.game_service.tests.conftest import TestingSessionLocal
-from apps.game_service.tests.utils import MOCK_IGDB_GAME, setup_mock_igdb_client
+from tests.conftest import TestingSessionLocal
+from tests.utils import MOCK_IGDB_GAME, setup_mock_igdb_client
+
 from db.models.collection import Collection, CollectionEntry
 
 
@@ -84,10 +85,10 @@ class TestUpdateCollectionEntry(BaseCollectionEntryAPITest):
         self.assertEqual(create_resp.status_code, 201)
         entry_id = create_resp.json()["id"]
         # Create user 2 and try to update
-        other_user = self.add_user(
+        self.add_user(
             username="otheruser", email="other@example.com", password="irrelevant"
         )
-        other_headers = {"Authorization": generate_mock_jwt(str(other_user.id))}
+        other_headers = {"Authorization": generate_mock_jwt("otheruser")}
         update_payload = {"notes": "Should not work"}
         resp = self.client.put(
             f"/collections/{self.test_collection.id}/entries/{entry_id}",
@@ -267,4 +268,5 @@ class TestUpdateCollectionEntry(BaseCollectionEntryAPITest):
         )
         self.assertEqual(resp.status_code, 401)
         data = resp.json()
+        self.assertIn("detail", data)
         self.assertIn("detail", data)

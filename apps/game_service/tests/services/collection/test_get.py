@@ -4,8 +4,8 @@ Tests for the get methods of CollectionService.
 
 # pylint: disable=duplicate-code, wrong-import-order
 
-from apps.game_service.src.services.collection_service import CollectionNotFoundError
-from apps.game_service.tests.services.collection.test_base import (
+from src.services.collection_service import CollectionNotFoundError
+from tests.services.collection.test_base import (
     BaseCollectionServiceTest,
 )
 

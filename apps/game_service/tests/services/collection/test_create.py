@@ -6,10 +6,10 @@ Tests for the create methods of CollectionService.
 
 from pydantic import ValidationError
 
-from apps.game_service.src.schemas.collection import CollectionCreate
+from src.schemas.collection import CollectionCreate
 
 # Import removed - CollectionService is imported from the base class
-from apps.game_service.tests.services.collection.test_base import (
+from tests.services.collection.test_base import (
     BaseCollectionServiceTest,
 )
 from db.models.collection import Collection

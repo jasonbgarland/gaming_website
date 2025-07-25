@@ -6,13 +6,11 @@ import unittest
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from src.services.collection_entry_service import CollectionEntryService
+from src.services.collection_service import CollectionService
 
-from apps.game_service.src.services.collection_entry_service import (
-    CollectionEntryService,
-)
-from apps.game_service.src.services.collection_service import CollectionService
-from db.models import Base
-from db.models.collection import Collection
+from db.models import Base  # pylint: disable=wrong-import-order
+from db.models.collection import Collection  # pylint: disable=wrong-import-order
 
 # pylint: disable=too-many-instance-attributes
 

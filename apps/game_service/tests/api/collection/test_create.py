@@ -4,7 +4,7 @@ Tests for the create collection API endpoints.
 
 # pylint: disable=duplicate-code,wrong-import-order
 
-from apps.game_service.tests.api.collection.test_base import BaseCollectionAPITest
+from tests.api.collection.test_base import BaseCollectionAPITest
 
 
 class TestCreateCollection(BaseCollectionAPITest):

@@ -6,11 +6,11 @@ Tests for the update methods of CollectionEntryService.
 
 # Removed unused import
 
-from apps.game_service.src.services.collection_entry_service import (
+from src.services.collection_entry_service import (
     CollectionEntryNotFoundError,
     CollectionEntryPermissionError,
 )
-from apps.game_service.tests.services.collection_entry.test_base import (
+from tests.services.collection_entry.test_base import (
     BaseCollectionEntryServiceTest,
 )
 from db.models.collection import CollectionEntry

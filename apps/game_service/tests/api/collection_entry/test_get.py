@@ -6,11 +6,11 @@ Tests for the GET collection entry API endpoints.
 
 from unittest.mock import Mock, patch
 
-from apps.game_service.tests.api.collection_entry.test_base import (
+from tests.api.collection_entry.test_base import (
     BaseCollectionEntryAPITest,
     generate_mock_jwt,
 )
-from apps.game_service.tests.utils import MOCK_IGDB_GAME, setup_mock_igdb_client
+from tests.utils import MOCK_IGDB_GAME, setup_mock_igdb_client
 
 
 class TestListCollectionEntries(BaseCollectionEntryAPITest):

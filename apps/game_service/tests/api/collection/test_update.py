@@ -4,10 +4,7 @@ Tests for the update collection API endpoints.
 
 # pylint: disable=duplicate-code,wrong-import-order
 
-from apps.game_service.tests.api.collection.test_base import (
-    BaseCollectionAPITest,
-    generate_mock_jwt,
-)
+from tests.api.collection.test_base import BaseCollectionAPITest, generate_mock_jwt
 
 
 class TestUpdateCollection(BaseCollectionAPITest):
@@ -38,7 +35,7 @@ class TestUpdateCollection(BaseCollectionAPITest):
 
         # Create a second user and their collection
         self.other_user_id = 2
-        self.other_user_token = generate_mock_jwt(user_id="2")
+        self.other_user_token = generate_mock_jwt(username="otheruser")
         # Create user with ID 2 (test setup will use this ID)
         self.add_user(
             username="otheruser",

@@ -7,16 +7,11 @@ Follows TDD and checklist-driven workflow.
 import logging
 from typing import List
 
-from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
+from src.schemas.collection import CollectionCreate, CollectionOut, CollectionUpdate
 
-from apps.game_service.src.schemas.collection import (
-    CollectionCreate,
-    CollectionOut,
-    CollectionUpdate,
-)
-from db.models.collection import Collection
+from db.models.collection import Collection  # pylint: disable=wrong-import-order
 
 logger = logging.getLogger("collection_service")
 
@@ -117,12 +112,6 @@ class CollectionService:
             data,
         )
 
-        try:
-            validated = CollectionUpdate.model_validate(data)
-        except ValidationError as ve:
-            logger.error("Validation error: %s", ve)
-            raise
-
         # Validate types
         if not isinstance(collection_id, int):
             raise TypeError("collection_id must be an integer")
@@ -139,28 +128,25 @@ class CollectionService:
 
         # Only update fields that are not None AND different from current value
         fields_updated = False
-        if validated.name is not None and validated.name != collection.name:
+        if data.name is not None and data.name != collection.name:
             # Check for duplicate name for this user (excluding current collection)
             duplicate = (
                 db.query(Collection)
                 .filter(
                     Collection.user_id == user_id,
-                    Collection.name == validated.name,
+                    Collection.name == data.name,
                     Collection.id != collection_id,
                 )
                 .first()
             )
             if duplicate:
-                logger.info("Duplicate collection name for user: %s", validated.name)
+                logger.info("Duplicate collection name for user: %s", data.name)
                 raise ValueError("Collection name already exists for this user.")
-            collection.name = validated.name
+            collection.name = data.name
             fields_updated = True
 
-        if (
-            validated.description is not None
-            and validated.description != collection.description
-        ):
-            collection.description = validated.description
+        if data.description is not None and data.description != collection.description:
+            collection.description = data.description
             fields_updated = True
 
         if not fields_updated:

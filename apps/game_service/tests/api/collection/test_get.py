@@ -6,10 +6,7 @@ Tests for the get collection by ID API endpoints.
 
 from unittest.mock import patch
 
-from apps.game_service.tests.api.collection.test_base import (
-    BaseCollectionAPITest,
-    generate_mock_jwt,
-)
+from tests.api.collection.test_base import BaseCollectionAPITest, generate_mock_jwt
 
 
 class TestGetCollectionById(BaseCollectionAPITest):
@@ -47,7 +44,7 @@ class TestGetCollectionById(BaseCollectionAPITest):
     def test_get_collection_by_id_wrong_user(self):
         """Authenticated user gets 404 for a collection they don't own."""
         # Create a collection for other user
-        jwt_other = generate_mock_jwt(str(self.other_user_id))
+        jwt_other = generate_mock_jwt(username="user2")
         headers_other = {"Authorization": jwt_other}
         payload = {"name": "OtherUserColl", "description": "Other user's collection"}
         response = self.client.post(
@@ -98,7 +95,7 @@ class TestGetCollectionById(BaseCollectionAPITest):
     def test_get_collection_details_wrong_user_returns_404(self):
         """Should return 404 when the collection does not belong to the user."""
         # Create a collection for other user
-        jwt_other = generate_mock_jwt(str(self.other_user_id))
+        jwt_other = generate_mock_jwt(username="user2")
         headers_other = {"Authorization": jwt_other}
         payload = {"name": "OtherUserColl", "description": "Other user's collection"}
         response = self.client.post(

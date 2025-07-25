@@ -4,12 +4,11 @@ Base test class for collection entry service tests.
 
 from unittest.mock import Mock
 
-from apps.game_service.src.services.collection_entry_service import (
-    CollectionEntryService,
-)
-from apps.game_service.tests.conftest import TestingSessionLocal
-from apps.game_service.tests.test_base import TestDBBase
-from db.models.collection import CollectionEntry
+from src.services.collection_entry_service import CollectionEntryService
+from tests.conftest import TestingSessionLocal
+from tests.test_base import TestDBBase
+
+from db.models.collection import CollectionEntry  # pylint: disable=wrong-import-order
 
 
 class BaseCollectionEntryServiceTest(TestDBBase):

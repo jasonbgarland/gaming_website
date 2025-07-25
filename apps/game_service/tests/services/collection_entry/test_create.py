@@ -6,11 +6,10 @@ Tests for the create methods of CollectionEntryService.
 
 from unittest.mock import Mock, patch
 
-from apps.game_service.src.services.collection_entry_service import GameNotFoundError
-from apps.game_service.tests.services.collection_entry.test_base import (
-    BaseCollectionEntryServiceTest,
-)
-from apps.game_service.tests.utils import MOCK_IGDB_GAME, setup_mock_igdb_client
+from src.services.collection_entry_service import GameNotFoundError
+from tests.services.collection_entry.test_base import BaseCollectionEntryServiceTest
+from tests.utils import MOCK_IGDB_GAME, setup_mock_igdb_client
+
 from db.models.collection import CollectionEntry
 
 

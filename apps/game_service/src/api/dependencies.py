@@ -3,13 +3,15 @@ FastAPI dependencies for game_service API routes.
 Includes DB session and user authentication.
 """
 
+# pylint: disable=wrong-import-order
+
 from typing import Dict
 
 from fastapi import Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
+from src.core.database import get_db
+from src.igdb.auth import IGDBAuth
 
-from apps.game_service.src.core.database import get_db
-from apps.game_service.src.igdb.auth import IGDBAuth
 from db.models.user import User
 from shared.core.jwt_utils import decode_access_token
 

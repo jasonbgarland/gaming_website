@@ -6,11 +6,9 @@ Tests for the POST collection entry API endpoints.
 
 from unittest.mock import Mock, patch
 
-from apps.game_service.src.services.collection_entry_service import GameNotFoundError
-from apps.game_service.tests.api.collection_entry.test_base import (
-    BaseCollectionEntryAPITest,
-)
-from apps.game_service.tests.utils import MOCK_IGDB_GAME, setup_mock_igdb_client
+from src.services.collection_entry_service import GameNotFoundError
+from tests.api.collection_entry.test_base import BaseCollectionEntryAPITest
+from tests.utils import MOCK_IGDB_GAME, setup_mock_igdb_client
 
 
 class TestCreateCollectionEntry(BaseCollectionEntryAPITest):

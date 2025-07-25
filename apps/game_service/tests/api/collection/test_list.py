@@ -6,10 +6,7 @@ Tests for the list collections API endpoints.
 
 from unittest.mock import patch
 
-from apps.game_service.tests.api.collection.test_base import (
-    BaseCollectionAPITest,
-    generate_mock_jwt,
-)
+from tests.api.collection.test_base import BaseCollectionAPITest, generate_mock_jwt
 
 
 class TestListCollections(BaseCollectionAPITest):
@@ -96,13 +93,13 @@ class TestListCollections(BaseCollectionAPITest):
             "/collections/", json={"name": "User1Coll"}, headers=self.headers
         )
         # Create a second user and collection
-        second_jwt = generate_mock_jwt(user_id="2")
-        second_headers = {"Authorization": second_jwt}
         self.add_user(
             username="otheruser",
             email="otheruser@example.com",
             password="$2b$12$KIXQJQbQhQJQbQhQJQbQhQJQbQhQJQbQhQJQbQhQJQbQhQJQbQhO",
         )
+        second_jwt = generate_mock_jwt(username="otheruser")
+        second_headers = {"Authorization": second_jwt}
         self.client.post(
             "/collections/", json={"name": "User2Coll"}, headers=second_headers
         )

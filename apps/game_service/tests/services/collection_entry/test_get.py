@@ -4,13 +4,13 @@ Tests for the get and list methods of CollectionEntryService.
 
 # pylint: disable=duplicate-code, wrong-import-order
 
-from apps.game_service.src.services.collection_entry_service import (
+from src.services.collection_entry_service import (
     CollectionEntryNotFoundError,
     CollectionEntryPermissionError,
 )
 
 # Import removed - CollectionNotFoundError not needed here
-from apps.game_service.tests.services.collection_entry.test_base import (
+from tests.services.collection_entry.test_base import (
     BaseCollectionEntryServiceTest,
 )
 

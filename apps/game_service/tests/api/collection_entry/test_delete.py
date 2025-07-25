@@ -6,12 +6,13 @@ Tests for the DELETE collection entry API endpoints.
 
 from unittest.mock import Mock, patch
 
-from apps.game_service.tests.api.collection_entry.test_base import (
+from tests.api.collection_entry.test_base import (
     BaseCollectionEntryAPITest,
     generate_mock_jwt,
 )
-from apps.game_service.tests.conftest import TestingSessionLocal
-from apps.game_service.tests.utils import MOCK_IGDB_GAME, setup_mock_igdb_client
+from tests.conftest import TestingSessionLocal
+from tests.utils import MOCK_IGDB_GAME, setup_mock_igdb_client
+
 from db.models.collection import Collection
 
 
@@ -230,4 +231,5 @@ class TestDeleteCollectionEntry(BaseCollectionEntryAPITest):
             headers=self.headers,
         )
         self.assertEqual(delete_response.status_code, 404)
+        self.assertIn("not found", delete_response.json()["detail"].lower())
         self.assertIn("not found", delete_response.json()["detail"].lower())
