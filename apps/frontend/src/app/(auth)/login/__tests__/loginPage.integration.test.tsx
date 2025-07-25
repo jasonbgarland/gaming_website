@@ -86,7 +86,10 @@ beforeEach(() => {
 // Test suite for login flow
 describe("LoginPage integration", () => {
   it("submits login form, stores token, updates global auth state, and redirects user", async () => {
-    const mockJsonFn = jest.fn().mockResolvedValue({ token: "fake-jwt-token" });
+    const mockJsonFn = jest.fn().mockResolvedValue({
+      access_token: "fake-jwt-token",
+      token_type: "bearer",
+    });
     const mockResponse = { ok: true, json: mockJsonFn };
     mockApi.mockResolvedValueOnce(mockResponse);
     render(<LoginPage />);
@@ -114,7 +117,9 @@ describe("LoginPage integration", () => {
     });
     // Verify store login was called with correct token
     await waitFor(() => {
-      expect(mockLogin).toHaveBeenCalledWith("fake-jwt-token", undefined);
+      expect(mockLogin).toHaveBeenCalledWith("fake-jwt-token", {
+        email: "test@example.com",
+      });
     });
     // Verify redirect happened
     await waitFor(() => {
@@ -176,7 +181,10 @@ describe("LoginPage integration", () => {
   });
 
   it("prevents multiple rapid submissions (button disables, only one request)", async () => {
-    const mockJsonFn = jest.fn().mockResolvedValue({ token: "fake-jwt-token" });
+    const mockJsonFn = jest.fn().mockResolvedValue({
+      access_token: "fake-jwt-token",
+      token_type: "bearer",
+    });
     const mockResponse = { ok: true, json: mockJsonFn };
     mockApi.mockResolvedValueOnce(mockResponse);
     render(<LoginPage />);

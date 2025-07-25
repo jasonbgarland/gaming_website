@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import Navigation from "../Navigation";
 import { useAuthStore } from "../../store/auth";
+import type { AuthState } from "../../store/auth";
 
 // Mock Zustand store for logged-in state
 jest.mock("../../store/auth", () => ({
@@ -28,13 +29,18 @@ describe("Navigation", () => {
   describe("when user is logged in", () => {
     beforeEach(() => {
       // Mock the Zustand selector calls
-      mockUseAuthStore.mockImplementation((selector: any) => {
-        const state = {
-          isLoggedIn: true,
-          user: { email: "test@example.com" },
-        };
-        return selector(state);
-      });
+      mockUseAuthStore.mockImplementation(
+        (selector: (state: AuthState) => unknown) => {
+          const state: AuthState = {
+            isLoggedIn: true,
+            token: "mock-token",
+            user: { email: "test@example.com" },
+            login: jest.fn(),
+            logout: jest.fn(),
+          };
+          return selector(state);
+        }
+      );
     });
 
     it("should have a link to My Library", () => {
@@ -70,13 +76,18 @@ describe("Navigation", () => {
   describe("when user is not logged in", () => {
     beforeEach(() => {
       // Mock the Zustand selector calls
-      mockUseAuthStore.mockImplementation((selector: any) => {
-        const state = {
-          isLoggedIn: false,
-          user: null,
-        };
-        return selector(state);
-      });
+      mockUseAuthStore.mockImplementation(
+        (selector: (state: AuthState) => unknown) => {
+          const state: AuthState = {
+            isLoggedIn: false,
+            token: null,
+            user: null,
+            login: jest.fn(),
+            logout: jest.fn(),
+          };
+          return selector(state);
+        }
+      );
     });
 
     it("should show login and signup links", () => {
@@ -104,13 +115,18 @@ describe("Navigation", () => {
   describe("common elements", () => {
     beforeEach(() => {
       // Mock the Zustand selector calls for unauthenticated state
-      mockUseAuthStore.mockImplementation((selector: any) => {
-        const state = {
-          isLoggedIn: false,
-          user: null,
-        };
-        return selector(state);
-      });
+      mockUseAuthStore.mockImplementation(
+        (selector: (state: AuthState) => unknown) => {
+          const state: AuthState = {
+            isLoggedIn: false,
+            token: null,
+            user: null,
+            login: jest.fn(),
+            logout: jest.fn(),
+          };
+          return selector(state);
+        }
+      );
     });
 
     it("should always show the Gaming Website brand link", () => {
