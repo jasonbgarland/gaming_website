@@ -6,11 +6,12 @@ Unit tests for the /me endpoint (user info retrieval).
 
 import unittest
 from datetime import timedelta
+
 import jwt as pyjwt
 from sqlalchemy import text
-from tests.test_base import TestDBBase
-from tests.conftest import TestingSessionLocal
 from src.api.auth import create_access_token
+from tests.conftest import TestingSessionLocal
+from tests.test_base import TestDBBase
 
 
 class TestMeEndpoint(TestDBBase):
@@ -89,9 +90,11 @@ class TestMeEndpoint(TestDBBase):
 
     def test_me_token_tampered(self):
         """Test /me with a tampered token returns 401."""
-        # Tamper with the token by changing a character
+        # Tamper with the token by inserting invalid characters in the middle
         token = create_access_token({"sub": "meuser"})
-        tampered = token[:-1] + ("a" if token[-1] != "a" else "b")
+        # Insert invalid characters in the middle to ensure the signature is broken
+        middle = len(token) // 2
+        tampered = token[:middle] + "INVALID" + token[middle:]
         headers = {"Authorization": f"Bearer {tampered}"}
         response = self.client.get("/me", headers=headers)
         self.assertEqual(401, response.status_code)
@@ -110,4 +113,5 @@ class TestMeEndpoint(TestDBBase):
 
 
 if __name__ == "__main__":
+    unittest.main()
     unittest.main()
