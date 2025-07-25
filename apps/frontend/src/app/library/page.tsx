@@ -2,15 +2,16 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import LibraryTable from "./components/LibraryTable";
+import CollectionGrid from "./components/CollectionGrid";
 import { useCollections } from "../../hooks/useCollections";
-import { CreateCollectionModal } from "./components/CreateCollectionModal";
+import CreateCollectionModal from "./components/CreateCollectionModal";
 
 const LibraryPage: React.FC = () => {
   const router = useRouter();
   const { collections, isLoading, error, deleteCollection } = useCollections();
   const [showCreateCollectionModal, setShowCreateCollectionModal] =
     React.useState(false);
+  const { createCollection } = useCollections();
 
   const handleEdit = (collectionId: number) => {
     console.log("Edit collection:", collectionId);
@@ -32,10 +33,23 @@ const LibraryPage: React.FC = () => {
     router.push(`/library/${collectionId}`);
   };
 
-  const handleCreateCollection = (formData: any) => {
-    // TODO: Call useCollections().createCollection(formData)
-    console.log("Create collection:", formData);
-    setShowCreateCollectionModal(false);
+  const handleCreateCollection = async ({
+    name,
+    description,
+  }: {
+    name: string;
+    description: string;
+  }) => {
+    try {
+      await createCollection({
+        name,
+        description,
+      });
+      setShowCreateCollectionModal(false);
+    } catch (error) {
+      console.error("Failed to create collection:", error);
+      // Optionally show error feedback here
+    }
   };
 
   if (error) {
@@ -54,7 +68,7 @@ const LibraryPage: React.FC = () => {
         <div>Loading...</div>
       ) : (
         <React.Fragment>
-          <LibraryTable
+          <CollectionGrid
             collections={collections}
             onEdit={handleEdit}
             onDelete={handleDelete}

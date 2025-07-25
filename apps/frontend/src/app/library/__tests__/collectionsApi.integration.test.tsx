@@ -118,7 +118,7 @@ describe("Collections API Integration", () => {
         })
       );
 
-      const callArgs = fetchMock.mock.calls[0][1] as any;
+      const callArgs = fetchMock.mock.calls[0][1] as RequestInit;
       expect(callArgs.headers).not.toHaveProperty("Authorization");
     });
   });
@@ -168,13 +168,15 @@ describe("Collections API Integration", () => {
         status: 422,
         statusText: "Unprocessable Entity",
         json: async () => ({
-          detail: "Validation error: name cannot be empty",
+          detail: "name cannot be empty",
         }),
       } as Response);
 
       await expect(
         collectionsApi.createCollection(newCollection)
-      ).rejects.toThrow("Failed to create collection: 422");
+      ).rejects.toThrow(
+        "Invalid collection data. Name can only contain letters, numbers, and spaces."
+      );
     });
   });
 

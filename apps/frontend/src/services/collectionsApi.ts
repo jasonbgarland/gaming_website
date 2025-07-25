@@ -65,6 +65,18 @@ class CollectionsApi {
     });
 
     if (!response.ok) {
+      if (response.status === 422) {
+        // Try to get detailed validation error from response
+        try {
+          const errorData = await response.json();
+          if (errorData.detail) {
+            throw new Error(`Validation error: ${errorData.detail}`);
+          }
+        } catch {
+          // If we can't parse the error, fall back to generic message
+        }
+        throw new Error("Invalid collection data. Name can only contain letters, numbers, and spaces.");
+      }
       throw new Error(`Failed to create collection: ${response.status}`);
     }
 

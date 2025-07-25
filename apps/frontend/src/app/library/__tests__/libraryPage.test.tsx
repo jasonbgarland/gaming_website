@@ -8,9 +8,9 @@ jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
 }));
 
-// Mock the LibraryTable component
-jest.mock("../components/LibraryTable", () => {
-  return function MockLibraryTable({
+// Mock the CollectionGrid component
+jest.mock("../components/CollectionGrid", () => {
+  return function MockCollectionGrid({
     collections,
     onEdit,
     onDelete,
@@ -22,7 +22,7 @@ jest.mock("../components/LibraryTable", () => {
     onViewCollection: (id: number) => void;
   }) {
     return (
-      <div data-testid="library-table">
+      <div data-testid="collection-grid">
         <div>Collections: {collections.length}</div>
         <button onClick={() => onEdit(1)}>Edit Mock</button>
         <button onClick={() => onDelete(1)}>Delete Mock</button>
@@ -39,8 +39,12 @@ jest.mock("../../../hooks/useCollections", () => ({
 
 const mockPush = jest.fn();
 const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
-const mockUseCollections = require("../../../hooks/useCollections")
-  .useCollections as jest.MockedFunction<any>;
+
+// Dynamic import to avoid require()
+const mockUseCollections = jest.fn();
+jest.mock("../../../hooks/useCollections", () => ({
+  useCollections: () => mockUseCollections(),
+}));
 
 describe("LibraryPage", () => {
   beforeEach(() => {
@@ -100,7 +104,7 @@ describe("LibraryPage", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders LibraryTable with collections after loading", async () => {
+  it("renders CollectionGrid with collections after loading", async () => {
     const mockCollections = [
       { id: 1, name: "My Favorites", description: "Best games" },
       { id: 2, name: "RPGs", description: "Role playing games" },
@@ -117,12 +121,12 @@ describe("LibraryPage", () => {
 
     render(<LibraryPage />);
 
-    // Should render the mocked table
-    expect(screen.getByTestId("library-table")).toBeInTheDocument();
+    // Should render the mocked grid
+    expect(screen.getByTestId("collection-grid")).toBeInTheDocument();
     expect(screen.getByText("Collections: 3")).toBeInTheDocument();
   });
 
-  it("passes correct handlers to LibraryTable", async () => {
+  it("passes correct handlers to CollectionGrid", async () => {
     const mockCollections = [
       { id: 1, name: "My Favorites", description: "Best games" },
     ];

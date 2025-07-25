@@ -8,7 +8,7 @@ export interface User {
   [key: string]: unknown;
 }
 
-interface AuthState {
+export interface AuthState {
   isLoggedIn: boolean;
   token: string | null;
   user: User | null;

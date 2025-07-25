@@ -44,19 +44,19 @@ export function useLogin() {
         setError("Invalid credentials. Please check your email and password.");
         return;
       }
-      let data: { token?: string; user?: { email?: string } };
+      let data: { access_token?: string; token_type?: string };
       try {
         data = await response.json();
       } catch {
         setError("Unexpected error: Could not parse server response.");
         return;
       }
-      if (!data || !data.token) {
+      if (!data || !data.access_token) {
         setError("Unexpected error: No token received from server.");
         return;
       }
       // Update global auth state (Zustand will handle localStorage persistence)
-      login(data.token, data.user);
+      login(data.access_token, { email });
       // Redirect user to dashboard or home
       router.push("/");
     } catch {
