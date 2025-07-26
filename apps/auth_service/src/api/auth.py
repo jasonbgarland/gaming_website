@@ -110,14 +110,16 @@ def signup(user: UserSignup, db: Session = Depends(get_db)) -> TokenOut:
     response_model=TokenOut,
     summary="Authenticate and get JWT access token",
     tags=["auth"],
-    responses={401: {"description": "Invalid username or password"}},
+    responses={401: {"description": "Invalid email or password"}},
 )
 def login(user: UserLogin, db: Session = Depends(get_db)) -> TokenOut:
     """Authenticate user and return JWT access token."""
-    db_user = db.query(User).filter(User.username == user.username).first()
+    # Find user by email
+    db_user = db.query(User).filter(User.email == user.email).first()
+
     if not db_user or not pwd_context.verify(user.password, db_user.hashed_password):
-        logger.info("Login failed for username: %s", user.username)
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+        logger.info("Login failed for email: %s", user.email)
+        raise HTTPException(status_code=401, detail="Invalid email or password")
     access_token = create_access_token({"sub": db_user.username})
-    logger.info("User logged in: %s", user.username)
+    logger.info("User logged in: %s (email: %s)", db_user.username, user.email)
     return TokenOut(access_token=access_token, token_type="bearer")

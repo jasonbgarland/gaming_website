@@ -1,6 +1,6 @@
 """Pydantic schema for user login request."""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 
 
 # pylint: disable=too-few-public-methods
@@ -8,12 +8,12 @@ from pydantic import BaseModel, Field
 class UserLogin(BaseModel):
     """Schema for user login credentials. Used for validating login requests."""
 
-    username: str = Field(..., min_length=3, max_length=50)
+    email: EmailStr = Field(..., description="User's email address")
     password: str = Field(..., min_length=8, max_length=128)
 
     class Config:
         """Pydantic config for OpenAPI example generation."""
 
         json_schema_extra = {
-            "example": {"username": "loginuser", "password": "LoginPass123"}
+            "example": {"email": "user@example.com", "password": "LoginPass123"}
         }
