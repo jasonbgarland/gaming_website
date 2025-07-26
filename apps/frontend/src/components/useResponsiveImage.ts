@@ -74,7 +74,6 @@ export function useResponsiveImage(
       }
 
       // Fallback chain if preferred size isn't available
-      const originalSelected = selectedUrl;
       selectedUrl =
         selectedUrl ||
         coverImages.large ||
