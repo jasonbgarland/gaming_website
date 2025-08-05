@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import CollectionGrid from "./components/CollectionGrid";
-import { useCollections } from "../../hooks/useCollections";
+import { useCollections } from "hooks/useCollections";
 import CreateCollectionModal from "./components/CreateCollectionModal";
 
 const LibraryPage: React.FC = () => {

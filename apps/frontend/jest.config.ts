@@ -22,6 +22,15 @@ const config: Config = {
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
     // Handle static assets
     "\\.(jpg|jpeg|png|gif|webp|svg)$": "<rootDir>/__mocks__/fileMock.js",
+    // Support absolute imports from src directory (matching tsconfig baseUrl)
+    "^services/(.*)$": "<rootDir>/src/services/$1",
+    "^components/(.*)$": "<rootDir>/src/components/$1",
+    "^hooks/(.*)$": "<rootDir>/src/hooks/$1",
+    "^store/(.*)$": "<rootDir>/src/store/$1",
+    "^utils/(.*)$": "<rootDir>/src/utils/$1",
+    "^types/(.*)$": "<rootDir>/src/types/$1",
+    // Handle @/* imports (if we want to use them)
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
 };
 
