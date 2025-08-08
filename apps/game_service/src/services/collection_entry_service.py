@@ -5,9 +5,10 @@ Follows TDD and checklist-driven workflow.
 """
 
 import logging
+from datetime import datetime
 from typing import Optional
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from apps.game_service.src.igdb.client import IGDBClient
 from apps.game_service.src.schemas.collection_entry import (
@@ -15,6 +16,7 @@ from apps.game_service.src.schemas.collection_entry import (
     CollectionEntryOut,
 )
 from db.models.collection import Collection, CollectionEntry
+from db.models.game import Game
 
 logger = logging.getLogger("collection_entry_service")
 
@@ -52,6 +54,118 @@ class CollectionEntryService:  # pylint: disable=too-few-public-methods
             igdb_client (IGDBClient, optional): Client for validating games in IGDB.
         """
         self.igdb_client = igdb_client
+
+    def _extract_platform_from_igdb_data(self, igdb_game_data: dict) -> str:
+        """Extract platform from IGDB game data, handling different formats."""
+        platforms = igdb_game_data.get("platforms", [])
+        if platforms:
+            # Handle both raw IGDB format (dicts) and processed format (strings)
+            if isinstance(platforms[0], dict):
+                return platforms[0].get("name", "Unknown")
+            return platforms[0]  # Already a string
+        return "Unknown"
+
+    def _extract_genre_from_igdb_data(self, igdb_game_data: dict) -> str:
+        """Extract genres from IGDB game data, handling different formats."""
+        genres = igdb_game_data.get("genres", [])
+        if genres:
+            # Handle both raw IGDB format (dicts) and processed format (strings)
+            if isinstance(genres[0], dict):
+                genre_names = [g.get("name", "") for g in genres if isinstance(g, dict)]
+            else:
+                genre_names = [g for g in genres if isinstance(g, str)]
+            return ", ".join(genre_names) if genre_names else None
+        return None
+
+    def _extract_cover_url_from_igdb_data(self, igdb_game_data: dict) -> str:
+        """Extract cover URL from IGDB game data, handling different formats."""
+        cover_url = igdb_game_data.get("cover_url")
+        if not cover_url:
+            # Handle raw IGDB format where cover is nested
+            cover_data = igdb_game_data.get("cover", {})
+            if cover_data:
+                cover_url = cover_data.get("url")
+        return cover_url
+
+    def _extract_release_date_from_igdb_data(self, igdb_game_data: dict):
+        """Extract release date from IGDB game data, handling different formats."""
+        release_timestamp = igdb_game_data.get("release_date") or igdb_game_data.get(
+            "first_release_date"
+        )
+        if release_timestamp:
+            try:
+                return datetime.fromtimestamp(release_timestamp).date()
+            except (ValueError, TypeError, OSError):
+                pass  # Keep as None if invalid
+        return None
+
+    def _get_or_create_game(self, igdb_game_id: int, db: Session) -> Game:
+        """
+        Get an existing game from the local database or create a new one from IGDB data.
+
+        Args:
+            igdb_game_id: The IGDB ID of the game
+            db: Database session
+
+        Returns:
+            Game: The local game record
+
+        Raises:
+            GameNotFoundError: If the game is not found in IGDB
+        """
+        # Check if game already exists locally (by IGDB ID first, then by name/platform)
+        existing_game = db.query(Game).filter(Game.igdb_id == igdb_game_id).first()
+        if existing_game:
+            logger.info("Game already exists locally: %s", existing_game.name)
+            return existing_game
+
+        # Fetch game data from IGDB
+        if not self.igdb_client:
+            raise GameNotFoundError("No IGDB client available to fetch game data")
+
+        try:
+            igdb_game_data = self.igdb_client.get_game_by_id(igdb_game_id)
+            logger.info("Game found in IGDB: %s", igdb_game_data.get("name", "Unknown"))
+        except (ValueError, GameNotFoundError, Exception) as e:
+            logger.error("Game not found in IGDB with id=%s: %s", igdb_game_id, e)
+            raise GameNotFoundError("Game not found in IGDB.") from e
+
+        # Create new game record with IGDB data
+        platform = self._extract_platform_from_igdb_data(igdb_game_data)
+        genre_str = self._extract_genre_from_igdb_data(igdb_game_data)
+        cover_url = self._extract_cover_url_from_igdb_data(igdb_game_data)
+        release_date = self._extract_release_date_from_igdb_data(igdb_game_data)
+
+        new_game = Game(
+            igdb_id=igdb_game_id,
+            name=igdb_game_data.get("name", "Unknown Game"),
+            platform=platform,
+            release_date=release_date,
+            cover_url=cover_url,
+            genre=genre_str,
+        )
+
+        # Check if a game with the same name/platform already exists
+        # This handles cases where different IGDB IDs might map to the same game
+        existing_by_name_platform = (
+            db.query(Game)
+            .filter(Game.name == new_game.name, Game.platform == new_game.platform)
+            .first()
+        )
+        if existing_by_name_platform:
+            logger.info(
+                "Game with same name/platform already exists: %s (local_id=%s)",
+                existing_by_name_platform.name,
+                existing_by_name_platform.id,
+            )
+            return existing_by_name_platform
+
+        db.add(new_game)
+        db.flush()  # Get the ID without committing
+        logger.info(
+            "Created new game record: %s (local_id=%s)", new_game.name, new_game.id
+        )
+        return new_game
 
     def create_entry(
         self,
@@ -96,40 +210,32 @@ class CollectionEntryService:  # pylint: disable=too-few-public-methods
             # Use the imported CollectionEntryCreate class
             entry_data = CollectionEntryCreate(**entry_data)
 
-        # Check if the game exists in IGDB
-        if self.igdb_client:
-            try:
-                game = self.igdb_client.get_game_by_id(entry_data.game_id)
-                logger.info("Game found in IGDB: %s", game.get("name", "Unknown"))
-            except (ValueError, GameNotFoundError, Exception) as e:
-                logger.error(
-                    "Game not found in IGDB with id=%s: %s", entry_data.game_id, e
-                )
-                raise GameNotFoundError("Game not found in IGDB.") from e
-        else:
-            logger.warning("No IGDB client provided, skipping game validation")
+        # Get or create the game in our local database
+        # This validates the game exists in IGDB and creates/retrieves the local record
+        local_game = self._get_or_create_game(entry_data.game_id, db)
 
-        # Check for duplicate entry
+        # Check for duplicate entry using local game ID
         existing_entry = (
             db.query(CollectionEntry)
             .filter(
                 CollectionEntry.collection_id == collection_id,
-                CollectionEntry.game_id == entry_data.game_id,
+                CollectionEntry.game_id == local_game.id,  # Use local game ID
             )
             .first()
         )
         if existing_entry:
             logger.error(
-                "Duplicate entry found for collection_id=%s, game_id=%s",
+                "Duplicate entry found for collection_id=%s, game_id=%s (local_id=%s)",
                 collection_id,
                 entry_data.game_id,
+                local_game.id,
             )
             raise DuplicateEntryError("This game is already in the collection.")
 
-        # Create the new entry
+        # Create the new entry using local game ID
         new_entry = CollectionEntry(
             collection_id=collection_id,
-            game_id=entry_data.game_id,
+            game_id=local_game.id,  # Use local game ID, not IGDB ID
             notes=entry_data.notes,
             status=entry_data.status,
             rating=entry_data.rating,
@@ -168,6 +274,7 @@ class CollectionEntryService:  # pylint: disable=too-few-public-methods
         entries = (
             db.query(CollectionEntry)
             .filter(CollectionEntry.collection_id == collection_id)
+            .options(joinedload(CollectionEntry.game))  # Eager load game details
             .order_by(CollectionEntry.added_at.desc(), CollectionEntry.id.desc())
             .all()
         )
@@ -201,6 +308,7 @@ class CollectionEntryService:  # pylint: disable=too-few-public-methods
                 CollectionEntry.collection_id == collection_id,
                 CollectionEntry.id == entry_id,
             )
+            .options(joinedload(CollectionEntry.game))  # Eager load game details
             .first()
         )
         if not entry:
@@ -235,6 +343,7 @@ class CollectionEntryService:  # pylint: disable=too-few-public-methods
                 CollectionEntry.id == entry_id,
                 CollectionEntry.collection_id == collection_id,
             )
+            .options(joinedload(CollectionEntry.game))  # Eager load game details
             .first()
         )
         if not entry:

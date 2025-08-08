@@ -98,6 +98,7 @@ class CollectionEntry(Base):
     )
 
     collection = relationship("Collection", back_populates="entries")
+    game = relationship("Game")
 
     def __repr__(self) -> str:
         return f"<CollectionEntry(id={self.id}, collection_id={self.collection_id}, game_id={self.game_id})>"

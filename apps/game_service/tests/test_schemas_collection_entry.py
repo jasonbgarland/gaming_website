@@ -45,6 +45,15 @@ class TestCollectionEntrySchemas(unittest.TestCase):
     def test_entry_out_fields(self):
         """Test CollectionEntryOut schema fields and values."""
         now = datetime.now(UTC)
+        mock_game = {
+            "id": 2,
+            "igdb_id": 1234,
+            "name": "Test Game",
+            "platform": "PC",
+            "release_date": None,
+            "cover_url": "https://example.com/cover.jpg",
+            "genre": "RPG",
+        }
         obj = CollectionEntryOut(
             id=5,
             collection_id=1,
@@ -54,6 +63,7 @@ class TestCollectionEntrySchemas(unittest.TestCase):
             status="playing",
             rating=8,
             custom_tags={"platform": "PC"},
+            game=mock_game,
         )
         self.assertEqual(5, obj.id)
         self.assertEqual(1, obj.collection_id)

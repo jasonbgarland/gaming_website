@@ -3,10 +3,27 @@ Pydantic schemas for CollectionEntry.
 """
 
 # pylint: disable=too-few-public-methods
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, Field
+
+
+class GameOut(BaseModel):
+    """Schema for returning game details in collection entries."""
+
+    id: int
+    igdb_id: Optional[int] = None
+    name: str
+    platform: str
+    release_date: Optional[date] = None
+    cover_url: Optional[str] = None
+    genre: Optional[str] = None
+
+    class Config:
+        """Pydantic config for ORM mode (from_attributes)."""
+
+        from_attributes = True
 
 
 class CollectionEntryBase(BaseModel):
@@ -42,6 +59,7 @@ class CollectionEntryOut(CollectionEntryBase):
     id: int
     collection_id: int
     added_at: datetime
+    game: GameOut  # Include full game details
 
     class Config:
         """Pydantic config for ORM mode (from_attributes)."""
