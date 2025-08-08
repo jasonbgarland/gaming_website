@@ -48,6 +48,8 @@ describe("CollectionDetailPage", () => {
     render(<CollectionDetailPage />);
 
     expect(screen.getByText("Collection Not Found")).toBeInTheDocument();
-    expect(screen.getByText("Error: Failed to load collection")).toBeInTheDocument();
+    expect(
+      screen.getByText("Error: Failed to load collection")
+    ).toBeInTheDocument();
   });
 });
