@@ -12,13 +12,22 @@ describe("GameEntryCard", () => {
     rating: 9,
     custom_tags: { genre: "rpg", platform: "pc" },
     added_at: "2025-07-30T12:00:00Z",
+    game: {
+      id: 101,
+      igdb_id: 1234,
+      name: "Test Game",
+      platform: "PC",
+      cover_url: "https://example.com/cover.jpg",
+      genre: "RPG",
+    },
   };
 
   it("renders game entry information", () => {
     render(<GameEntryCard entry={mockEntry} />);
 
-    // Should show game ID (temporary until we have game lookup)
-    expect(screen.getByText("Game ID: 101")).toBeInTheDocument();
+    // Should show game name and platform
+    expect(screen.getByText("Test Game")).toBeInTheDocument();
+    expect(screen.getByText("PC")).toBeInTheDocument();
 
     // Should show user's notes
     expect(
@@ -44,12 +53,19 @@ describe("GameEntryCard", () => {
       id: 2,
       collection_id: 42,
       game_id: 102,
+      game: {
+        id: 102,
+        name: "Minimal Game",
+        platform: "PlayStation",
+      },
     };
 
     render(<GameEntryCard entry={minimalEntry} />);
 
-    expect(screen.getByText("Game ID: 102")).toBeInTheDocument();
     // Should not crash when optional fields are missing
+    // Should show game name and platform
+    expect(screen.getByText("Minimal Game")).toBeInTheDocument();
+    expect(screen.getByText("PlayStation")).toBeInTheDocument();
   });
 
   it("applies correct styling classes", () => {

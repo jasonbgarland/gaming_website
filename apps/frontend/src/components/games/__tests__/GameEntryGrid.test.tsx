@@ -13,6 +13,12 @@ describe("GameEntryGrid", () => {
       rating: 9,
       custom_tags: { genre: "rpg" },
       added_at: "2025-07-30T12:00:00Z",
+      game: {
+        id: 101,
+        name: "Test RPG",
+        platform: "PC",
+        cover_url: "https://example.com/rpg.jpg",
+      },
     },
     {
       id: 2,
@@ -23,17 +29,21 @@ describe("GameEntryGrid", () => {
       rating: 8,
       custom_tags: { genre: "fps" },
       added_at: "2025-07-31T14:30:00Z",
+      game: {
+        id: 102,
+        name: "Test Shooter",
+        platform: "PlayStation",
+        cover_url: "https://example.com/shooter.jpg",
+      },
     },
   ];
 
   it("renders multiple game entry cards", () => {
     render(<GameEntryGrid entries={mockEntries} />);
 
-    // Should show both game entries
-    expect(screen.getByText("Game ID: 101")).toBeInTheDocument();
-    expect(screen.getByText("Game ID: 102")).toBeInTheDocument();
-
-    // Should show notes from both entries
+    // Should show both games by their names and notes
+    expect(screen.getByText("Test RPG")).toBeInTheDocument();
+    expect(screen.getByText("Test Shooter")).toBeInTheDocument();
     expect(screen.getByText("Amazing RPG")).toBeInTheDocument();
     expect(screen.getByText("Great shooter")).toBeInTheDocument();
   });

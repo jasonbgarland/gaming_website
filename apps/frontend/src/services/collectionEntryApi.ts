@@ -1,6 +1,16 @@
 // API service for collection entries
 import { useAuthStore } from "../store/auth";
 
+export interface GameOut {
+  id: number;
+  igdb_id?: number;
+  name: string;
+  platform: string;
+  release_date?: string; // ISO date string
+  cover_url?: string;
+  genre?: string;
+}
+
 export interface CollectionEntry {
   id: number;
   collection_id: number;
@@ -10,6 +20,7 @@ export interface CollectionEntry {
   rating?: number;
   custom_tags?: Record<string, string>;
   added_at?: string; // ISO date string, as returned by backend
+  game: GameOut; // Include full game details
 }
 
 export interface CreateCollectionEntryRequest {

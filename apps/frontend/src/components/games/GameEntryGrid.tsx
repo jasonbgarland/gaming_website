@@ -4,9 +4,13 @@ import GameEntryCard from "./GameEntryCard";
 
 interface GameEntryGridProps {
   entries: CollectionEntry[];
+  onRemoveGame?: (entryId: number) => void;
 }
 
-const GameEntryGrid: React.FC<GameEntryGridProps> = ({ entries }) => {
+const GameEntryGrid: React.FC<GameEntryGridProps> = ({
+  entries,
+  onRemoveGame,
+}) => {
   // Handle empty state
   if (entries.length === 0) {
     return (
@@ -27,7 +31,7 @@ const GameEntryGrid: React.FC<GameEntryGridProps> = ({ entries }) => {
       }}
     >
       {entries.map((entry) => (
-        <GameEntryCard key={entry.id} entry={entry} />
+        <GameEntryCard key={entry.id} entry={entry} onRemove={onRemoveGame} />
       ))}
     </div>
   );

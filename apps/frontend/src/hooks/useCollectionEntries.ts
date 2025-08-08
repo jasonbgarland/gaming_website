@@ -1,6 +1,6 @@
 "use client";
 
-import useSWR from "swr";
+import useSWR, { mutate as globalMutate } from "swr";
 import {
   collectionEntryApi,
   CollectionEntry,
@@ -13,6 +13,16 @@ import {
  * Handles API calls, loading state, error handling, and cache management.
  */
 export function useCollectionEntries(collectionId: number) {
+  // Helper function to invalidate collections counts cache
+  const invalidateCollectionsCounts = () => {
+    // Invalidate all collections counts caches by pattern matching
+    globalMutate(
+      (key) => typeof key === "string" && key.includes("/collections-counts-"),
+      undefined,
+      { revalidate: true }
+    );
+  };
+
   // SWR fetcher function
   const fetcher = () => collectionEntryApi.getCollectionEntries(collectionId);
 
@@ -40,6 +50,12 @@ export function useCollectionEntries(collectionId: number) {
       rating: data.rating,
       custom_tags: data.custom_tags,
       added_at: new Date().toISOString(),
+      // Placeholder game object for optimistic update - will be replaced with real data
+      game: {
+        id: data.game_id,
+        name: "Loading...",
+        platform: "Unknown",
+      },
     };
     mutate([...entries, optimisticEntry], false);
 
@@ -52,6 +68,8 @@ export function useCollectionEntries(collectionId: number) {
         entries.filter((e) => e.id !== optimisticEntry.id).concat(newEntry),
         false
       );
+      // Invalidate collections counts cache to update game counts on collection list
+      invalidateCollectionsCounts();
       return newEntry;
     } catch (error) {
       mutate(
@@ -71,6 +89,8 @@ export function useCollectionEntries(collectionId: number) {
     );
     try {
       await collectionEntryApi.deleteCollectionEntry(collectionId, entryId);
+      // Invalidate collections counts cache to update game counts on collection list
+      invalidateCollectionsCounts();
     } catch (error) {
       mutate(originalEntries, false);
       throw error;
