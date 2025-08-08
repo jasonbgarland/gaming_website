@@ -3,34 +3,55 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import CollectionGrid from "./components/CollectionGrid";
-import { useCollections } from "hooks/useCollections";
+import { useCollectionsWithCounts } from "hooks/useCollectionsWithCounts";
 import CreateCollectionModal from "./components/CreateCollectionModal";
+import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";
 
 const LibraryPage: React.FC = () => {
   const router = useRouter();
-  const { collections, isLoading, error, deleteCollection } = useCollections();
+  const { collections, isLoading, error, deleteCollection, createCollection } =
+    useCollectionsWithCounts();
   const [showCreateCollectionModal, setShowCreateCollectionModal] =
     React.useState(false);
-  const { createCollection } = useCollections();
 
-  const handleEdit = (collectionId: number) => {
-    console.log("Edit collection:", collectionId);
-    // TODO: Navigate to edit page or open edit modal
+  // State for delete confirmation modal
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+  const [collectionToDelete, setCollectionToDelete] = React.useState<{
+    id: number;
+    name: string;
+  } | null>(null);
+
+  const handleDelete = (collectionId: number) => {
+    // Find the collection to get its name for the confirmation modal
+    const collection = collections.find((c) => c.id === collectionId);
+    if (collection) {
+      setCollectionToDelete({ id: collection.id, name: collection.name });
+      setShowDeleteModal(true);
+    }
   };
 
-  const handleDelete = async (collectionId: number) => {
-    console.log("Delete collection:", collectionId);
+  const handleConfirmDelete = async () => {
+    if (!collectionToDelete) return;
+
     try {
-      await deleteCollection(collectionId);
+      await deleteCollection(collectionToDelete.id);
+      setShowDeleteModal(false);
+      setCollectionToDelete(null);
     } catch (error) {
       console.error("Failed to delete collection:", error);
       // TODO: Show error toast/notification
+      // Keep modal open so user can try again
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setCollectionToDelete(null);
   };
 
   const handleViewCollection = (collectionId: number) => {
     console.log("View collection:", collectionId);
-    router.push(`/library/${collectionId}`);
+    router.push(`/library/collections/${collectionId}`);
   };
 
   const handleCreateCollection = async ({
@@ -70,7 +91,6 @@ const LibraryPage: React.FC = () => {
         <React.Fragment>
           <CollectionGrid
             collections={collections}
-            onEdit={handleEdit}
             onDelete={handleDelete}
             onViewCollection={handleViewCollection}
           />
@@ -88,6 +108,13 @@ const LibraryPage: React.FC = () => {
               onCreate={handleCreateCollection}
             />
           )}
+
+          <DeleteConfirmationModal
+            isOpen={showDeleteModal}
+            collectionName={collectionToDelete?.name || ""}
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+          />
         </React.Fragment>
       )}
     </div>

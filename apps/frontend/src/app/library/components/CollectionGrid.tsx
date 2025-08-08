@@ -1,19 +1,17 @@
 "use client";
 
 import React from "react";
-import { Collection } from "../../../services/collectionsApi";
+import { CollectionWithCount } from "../../../hooks/useCollectionsWithCounts";
 import CollectionCard from "../../../components/collections/CollectionCard";
 
 interface CollectionGridProps {
-  collections: Collection[];
-  onEdit: (collectionId: number) => void;
+  collections: CollectionWithCount[];
   onDelete: (collectionId: number) => void;
   onViewCollection: (collectionId: number) => void;
 }
 
 const CollectionGrid: React.FC<CollectionGridProps> = ({
   collections,
-  onEdit,
   onDelete,
   onViewCollection,
 }) => {
@@ -28,7 +26,6 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
           <CollectionCard
             key={collection.id}
             collection={collection}
-            onEdit={onEdit}
             onDelete={onDelete}
             onViewCollection={onViewCollection}
           />

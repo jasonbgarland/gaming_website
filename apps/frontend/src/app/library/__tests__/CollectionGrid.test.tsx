@@ -1,8 +1,9 @@
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import CollectionGrid from "../components/CollectionGrid";
+import { CollectionWithCount } from "../../../hooks/useCollectionsWithCounts";
 
 describe("CollectionGrid", () => {
-  const mockCollections = [
+  const mockCollections: CollectionWithCount[] = [
     {
       id: 1,
       name: "Library",
@@ -17,11 +18,16 @@ describe("CollectionGrid", () => {
       description: "Games I want to play soon.",
       gameCount: 17,
     },
-    { id: 3, name: "Favorites", user_id: 1, description: "My top picks." }, //no gameCount!
+    {
+      id: 3,
+      name: "Favorites",
+      user_id: 1,
+      description: "My top picks.",
+      gameCount: 0, // Explicitly set gameCount
+    },
   ];
 
   const mockHandlers = {
-    onEdit: jest.fn(),
     onDelete: jest.fn(),
     onViewCollection: jest.fn(),
   };
@@ -56,22 +62,6 @@ describe("CollectionGrid", () => {
     expect(collectionCards).toHaveLength(0);
 
     expect(screen.getByText("No collections yet!")).toBeInTheDocument();
-  });
-
-  it("calls onEdit when the edit button is clicked", () => {
-    render(<CollectionGrid collections={mockCollections} {...mockHandlers} />);
-
-    const libraryButton = screen.getByLabelText("Edit Library collection");
-    fireEvent.click(libraryButton);
-    expect(mockHandlers.onEdit).toHaveBeenCalledWith(1);
-
-    const backlogButton = screen.getByLabelText("Edit Backlog collection");
-    fireEvent.click(backlogButton);
-    expect(mockHandlers.onEdit).toHaveBeenCalledWith(2);
-
-    const favoritesButton = screen.getByLabelText("Edit Favorites collection");
-    fireEvent.click(favoritesButton);
-    expect(mockHandlers.onEdit).toHaveBeenCalledWith(3);
   });
 
   it("calls onDelete when the delete button is clicked", () => {

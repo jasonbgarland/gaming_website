@@ -5,14 +5,12 @@ import { Collection } from "../../services/collectionsApi";
 
 interface CollectionCardProps {
   collection: Collection & { gameCount?: number };
-  onEdit: (collectionId: number) => void;
   onDelete: (collectionId: number) => void;
   onViewCollection: (collectionId: number) => void;
 }
 
 const CollectionCard: React.FC<CollectionCardProps> = ({
   collection,
-  onEdit,
   onDelete,
   onViewCollection,
 }) => {
@@ -109,21 +107,6 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
           transition: "opacity 0.2s ease, visibility 0.2s ease",
         }}
       >
-        <button
-          onClick={(e) => handleActionClick(e, onEdit)}
-          aria-label={`Edit ${collection.name} collection`}
-          style={{
-            padding: "0.25rem 0.5rem",
-            fontSize: "0.75rem",
-            backgroundColor: "#f3f4f6",
-            border: "1px solid #d1d5db",
-            borderRadius: "4px",
-            cursor: "pointer",
-            color: "#374151",
-          }}
-        >
-          Edit
-        </button>
         <button
           onClick={(e) => handleActionClick(e, onDelete)}
           aria-label={`Delete ${collection.name} collection`}

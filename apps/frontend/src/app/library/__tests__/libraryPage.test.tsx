@@ -32,18 +32,18 @@ jest.mock("../components/CollectionGrid", () => {
   };
 });
 
-// Mock the useCollections hook
-jest.mock("../../../hooks/useCollections", () => ({
-  useCollections: jest.fn(),
+// Mock the useCollectionsWithCounts hook
+jest.mock("../../../hooks/useCollectionsWithCounts", () => ({
+  useCollectionsWithCounts: jest.fn(),
 }));
 
 const mockPush = jest.fn();
 const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
 
 // Dynamic import to avoid require()
-const mockUseCollections = jest.fn();
-jest.mock("../../../hooks/useCollections", () => ({
-  useCollections: () => mockUseCollections(),
+const mockUseCollectionsWithCounts = jest.fn();
+jest.mock("../../../hooks/useCollectionsWithCounts", () => ({
+  useCollectionsWithCounts: () => mockUseCollectionsWithCounts(),
 }));
 
 describe("LibraryPage", () => {
@@ -61,11 +61,17 @@ describe("LibraryPage", () => {
 
   it("renders the My Library heading", () => {
     // Mock loading state
-    mockUseCollections.mockReturnValue({
+    mockUseCollectionsWithCounts.mockReturnValue({
       collections: [],
       isLoading: true,
       error: null,
       deleteCollection: jest.fn(),
+      createCollection: jest.fn(),
+      updateCollection: jest.fn(),
+      refreshCollections: jest.fn(),
+      refreshCollectionsWithCounts: jest.fn(),
+      updateCollectionCount: jest.fn(),
+      hasCollections: false,
     });
 
     render(<LibraryPage />);
@@ -76,11 +82,17 @@ describe("LibraryPage", () => {
 
   it("shows loading state initially", () => {
     // Mock loading state
-    mockUseCollections.mockReturnValue({
+    mockUseCollectionsWithCounts.mockReturnValue({
       collections: [],
       isLoading: true,
       error: null,
       deleteCollection: jest.fn(),
+      createCollection: jest.fn(),
+      updateCollection: jest.fn(),
+      refreshCollections: jest.fn(),
+      refreshCollectionsWithCounts: jest.fn(),
+      updateCollectionCount: jest.fn(),
+      hasCollections: false,
     });
 
     render(<LibraryPage />);
@@ -90,11 +102,17 @@ describe("LibraryPage", () => {
 
   it("shows error state when API fails", () => {
     // Mock error state
-    mockUseCollections.mockReturnValue({
+    mockUseCollectionsWithCounts.mockReturnValue({
       collections: [],
       isLoading: false,
       error: new Error("Failed to fetch collections"),
       deleteCollection: jest.fn(),
+      createCollection: jest.fn(),
+      updateCollection: jest.fn(),
+      refreshCollections: jest.fn(),
+      refreshCollectionsWithCounts: jest.fn(),
+      updateCollectionCount: jest.fn(),
+      hasCollections: false,
     });
 
     render(<LibraryPage />);
@@ -112,11 +130,17 @@ describe("LibraryPage", () => {
     ];
 
     // Mock loaded state with collections
-    mockUseCollections.mockReturnValue({
-      collections: mockCollections,
+    mockUseCollectionsWithCounts.mockReturnValue({
+      collections: mockCollections.map((c) => ({ ...c, gameCount: 0 })),
       isLoading: false,
       error: null,
       deleteCollection: jest.fn(),
+      createCollection: jest.fn(),
+      updateCollection: jest.fn(),
+      refreshCollections: jest.fn(),
+      refreshCollectionsWithCounts: jest.fn(),
+      updateCollectionCount: jest.fn(),
+      hasCollections: true,
     });
 
     render(<LibraryPage />);
@@ -134,11 +158,17 @@ describe("LibraryPage", () => {
     const mockDeleteCollection = jest.fn();
 
     // Mock loaded state with collections
-    mockUseCollections.mockReturnValue({
-      collections: mockCollections,
+    mockUseCollectionsWithCounts.mockReturnValue({
+      collections: mockCollections.map((c) => ({ ...c, gameCount: 0 })),
       isLoading: false,
       error: null,
       deleteCollection: mockDeleteCollection,
+      createCollection: jest.fn(),
+      updateCollection: jest.fn(),
+      refreshCollections: jest.fn(),
+      refreshCollectionsWithCounts: jest.fn(),
+      updateCollectionCount: jest.fn(),
+      hasCollections: true,
     });
 
     render(<LibraryPage />);
@@ -147,7 +177,7 @@ describe("LibraryPage", () => {
     const viewButton = screen.getByText("View Mock");
     viewButton.click();
 
-    expect(mockPush).toHaveBeenCalledWith("/library/1");
+    expect(mockPush).toHaveBeenCalledWith("/library/collections/1");
   });
 
   it("shows the Create Collection form when button is clicked", () => {
@@ -155,11 +185,17 @@ describe("LibraryPage", () => {
     const mockCollections: Collection[] = [];
 
     // Mock loaded state with collections
-    mockUseCollections.mockReturnValue({
-      collections: mockCollections,
+    mockUseCollectionsWithCounts.mockReturnValue({
+      collections: mockCollections.map((c) => ({ ...c, gameCount: 0 })),
       isLoading: false,
       error: null,
       deleteCollection: jest.fn(),
+      createCollection: jest.fn(),
+      updateCollection: jest.fn(),
+      refreshCollections: jest.fn(),
+      refreshCollectionsWithCounts: jest.fn(),
+      updateCollectionCount: jest.fn(),
+      hasCollections: false,
     });
 
     render(<LibraryPage />);

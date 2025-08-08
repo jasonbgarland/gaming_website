@@ -11,7 +11,6 @@ describe("CollectionCard", () => {
   };
 
   const mockHandlers = {
-    onEdit: jest.fn(),
     onDelete: jest.fn(),
     onViewCollection: jest.fn(),
   };
@@ -56,33 +55,18 @@ describe("CollectionCard", () => {
     expect(mockHandlers.onViewCollection).toHaveBeenCalledWith(1);
   });
 
-  it("shows action buttons on hover", () => {
+  it("shows delete button on hover", () => {
     render(<CollectionCard collection={mockCollection} {...mockHandlers} />);
 
     const card = screen.getByRole("button", { name: /view favorite rpgs/i });
 
     // Actions should be hidden initially
-    expect(screen.queryByText("Edit")).not.toBeVisible();
     expect(screen.queryByText("Delete")).not.toBeVisible();
 
     // Hover to show actions
     fireEvent.mouseEnter(card);
 
-    expect(screen.getByText("Edit")).toBeVisible();
     expect(screen.getByText("Delete")).toBeVisible();
-  });
-
-  it("calls onEdit when edit button is clicked", () => {
-    render(<CollectionCard collection={mockCollection} {...mockHandlers} />);
-
-    const card = screen.getByRole("button", { name: /view favorite rpgs/i });
-    fireEvent.mouseEnter(card);
-
-    const editButton = screen.getByText("Edit");
-    fireEvent.click(editButton);
-
-    expect(mockHandlers.onEdit).toHaveBeenCalledWith(1);
-    expect(mockHandlers.onViewCollection).not.toHaveBeenCalled();
   });
 
   it("calls onDelete when delete button is clicked", () => {
@@ -105,11 +89,10 @@ describe("CollectionCard", () => {
 
     // Show actions on hover
     fireEvent.mouseEnter(card);
-    expect(screen.getByText("Edit")).toBeVisible();
+    expect(screen.getByText("Delete")).toBeVisible();
 
     // Hide actions when mouse leaves
     fireEvent.mouseLeave(card);
-    expect(screen.queryByText("Edit")).not.toBeVisible();
     expect(screen.queryByText("Delete")).not.toBeVisible();
   });
 
@@ -171,13 +154,11 @@ describe("CollectionCard", () => {
     });
 
     // Actions should be hidden initially
-    expect(screen.queryByText("Edit")).not.toBeVisible();
     expect(screen.queryByText("Delete")).not.toBeVisible();
 
     // Focus to show actions
     fireEvent.focus(card);
 
-    expect(screen.getByText("Edit")).toBeVisible();
     expect(screen.getByText("Delete")).toBeVisible();
   });
 
@@ -190,11 +171,10 @@ describe("CollectionCard", () => {
 
     // Focus to show actions
     fireEvent.focus(card);
-    expect(screen.getByText("Edit")).toBeVisible();
+    expect(screen.getByText("Delete")).toBeVisible();
 
     // Blur to hide actions
     fireEvent.blur(card);
-    expect(screen.queryByText("Edit")).not.toBeVisible();
     expect(screen.queryByText("Delete")).not.toBeVisible();
   });
 
@@ -207,9 +187,6 @@ describe("CollectionCard", () => {
     });
     fireEvent.mouseEnter(card); // Show the action buttons
 
-    expect(
-      screen.getByLabelText("Edit Favorite RPGs collection")
-    ).toBeInTheDocument();
     expect(
       screen.getByLabelText("Delete Favorite RPGs collection")
     ).toBeInTheDocument();
