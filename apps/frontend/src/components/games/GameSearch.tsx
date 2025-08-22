@@ -1,7 +1,7 @@
 "use client";
 
 import { GameImage } from "./GameImage";
-import { useGameSearch, type Game } from "./useGameSearch";
+import { useGameSearch, type Game } from "../../hooks/useGameSearch";
 
 export type { Game };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useGameSearch, Game } from "components/useGameSearch";
+import { useGameSearch, Game } from "../../hooks/useGameSearch";
 import Image from "next/image";
 
 interface GameSearchModalProps {

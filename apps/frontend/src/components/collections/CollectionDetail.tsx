@@ -5,7 +5,7 @@ import { Collection } from "../../services/collectionsApi";
 import { useCollectionEntries } from "hooks/useCollectionEntries";
 import GameEntryGrid from "components/games/GameEntryGrid";
 import GameSearchModal from "components/games/GameSearchModal";
-import { Game } from "components/useGameSearch";
+import { Game } from "../../hooks/useGameSearch";
 
 interface CollectionDetailProps {
   collection: Collection;

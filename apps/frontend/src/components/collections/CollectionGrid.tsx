@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { CollectionWithCount } from "../../../hooks/useCollectionsWithCounts";
-import CollectionCard from "../../../components/collections/CollectionCard";
+import { CollectionWithCount } from "../../hooks/useCollectionsWithCounts";
+import CollectionCard from "./CollectionCard";
 
 interface CollectionGridProps {
   collections: CollectionWithCount[];

@@ -2,9 +2,9 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import CollectionGrid from "./components/CollectionGrid";
+import CollectionGrid from "../../components/collections/CollectionGrid";
 import { useCollectionsWithCounts } from "hooks/useCollectionsWithCounts";
-import CreateCollectionModal from "./components/CreateCollectionModal";
+import CreateCollectionModal from "../../components/modals/CreateCollectionModal";
 import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";
 
 const LibraryPage: React.FC = () => {

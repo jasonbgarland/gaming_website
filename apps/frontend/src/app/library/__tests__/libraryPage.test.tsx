@@ -9,7 +9,7 @@ jest.mock("next/navigation", () => ({
 }));
 
 // Mock the CollectionGrid component
-jest.mock("../components/CollectionGrid", () => {
+jest.mock("../../../components/collections/CollectionGrid", () => {
   return function MockCollectionGrid({
     collections,
     onEdit,

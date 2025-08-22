@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import LogoutButton from "../components/LogoutButton";
+import LogoutButton from "../../../../components/auth/LogoutButton";
 
 // Mock the useLogout hook
 const mockHandleLogout = jest.fn();

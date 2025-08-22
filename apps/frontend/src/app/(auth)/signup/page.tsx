@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import SignupForm from "./components/SignupForm";
+import SignupForm from "../../../components/auth/SignupForm";
 import { useSignup } from "./useSignup";
 
 /**

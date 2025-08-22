@@ -1,10 +1,10 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import GameSearchModal from "../GameSearchModal";
-import { useGameSearch } from "components/useGameSearch";
+import { useGameSearch } from "../../../hooks/useGameSearch";
 
 // Mock the useGameSearch hook
-jest.mock("components/useGameSearch");
+jest.mock("../../../hooks/useGameSearch");
 const mockUseGameSearch = useGameSearch as jest.Mock;
 
 describe("GameSearchModal", () => {

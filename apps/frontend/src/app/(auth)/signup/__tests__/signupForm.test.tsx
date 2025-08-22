@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import SignupForm from "../components/SignupForm";
+import SignupForm from "../../../../components/auth/SignupForm";
 
 describe("SignupForm", () => {
   it("renders email and password fields and a submit button", () => {

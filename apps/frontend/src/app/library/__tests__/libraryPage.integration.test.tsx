@@ -11,7 +11,7 @@ import LibraryPage from "../page";
 import { useAuthStore } from "../../../store/auth";
 
 // Mock the CollectionGrid component to focus on API integration
-jest.mock("../components/CollectionGrid", () => {
+jest.mock("../../../components/collections/CollectionGrid", () => {
   return function MockCollectionGrid({
     collections,
   }: {

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useResponsiveImage } from "./useResponsiveImage";
+import { useResponsiveImage } from "../../hooks/useResponsiveImage";
 
 interface GameImageProps {
   coverImages?: {

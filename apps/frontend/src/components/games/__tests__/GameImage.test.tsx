@@ -13,11 +13,11 @@ jest.mock("next/image", () => {
 });
 
 // Mock useResponsiveImage hook
-jest.mock("../useResponsiveImage", () => ({
+jest.mock("../../../hooks/useResponsiveImage", () => ({
   useResponsiveImage: jest.fn(),
 }));
 
-import { useResponsiveImage } from "../useResponsiveImage";
+import { useResponsiveImage } from "../../../hooks/useResponsiveImage";
 
 describe("GameImage component", () => {
   const mockUseResponsiveImage = useResponsiveImage as jest.MockedFunction<

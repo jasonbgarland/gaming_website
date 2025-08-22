@@ -5,7 +5,7 @@ import {
   waitFor,
   act,
 } from "@testing-library/react";
-import CreateCollectionModal from "../components/CreateCollectionModal";
+import CreateCollectionModal from "../CreateCollectionModal";
 
 describe("CreateCollectionModal", () => {
   const mockHandlers = {

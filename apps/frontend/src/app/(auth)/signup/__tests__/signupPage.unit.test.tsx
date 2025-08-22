@@ -1,9 +1,9 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import SignupPage from "../page";
-import SignupForm from "../components/SignupForm";
+import SignupForm from "../../../../components/auth/SignupForm";
 
-jest.mock("../components/SignupForm", () => jest.fn(() => null));
+jest.mock("../../../../components/auth/SignupForm", () => jest.fn(() => null));
 jest.mock("../useSignup", () => ({
   useSignup: jest.fn(() => ({
     handleSignup: jest.fn(),

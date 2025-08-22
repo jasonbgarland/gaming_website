@@ -1,4 +1,4 @@
-import { GameSearch } from "@components/GameSearch";
+import { GameSearch } from "@components/games/GameSearch";
 
 export default function GameSearchPage() {
   return (

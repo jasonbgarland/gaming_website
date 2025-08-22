@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "../store/auth";
-import LogoutButton from "../app/(auth)/logout/components/LogoutButton";
+import LogoutButton from "./auth/LogoutButton";
 
 /**
  * Navigation component that shows different content based on auth state.

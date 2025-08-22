@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useLogout } from "../useLogout";
+import { useLogout } from "../../app/(auth)/logout/useLogout";
 
 type LogoutButtonProps = {
   className?: string;
