@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useResponsiveImage } from "../../hooks/useResponsiveImage";
+import { useResponsiveImage } from "@/hooks/useResponsiveImage";
 
 interface GameImageProps {
   coverImages?: {
@@ -28,7 +28,7 @@ export function GameImage({
   if (!selectedImage) {
     return (
       <div
-        className={`bg-gray-200 flex items-center justify-center text-gray-500 ${className}`}
+        className={`bg-gamer-subtle flex items-center justify-center text-gamer-muted ${className}`}
       >
         No Image
       </div>

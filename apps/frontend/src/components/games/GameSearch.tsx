@@ -1,7 +1,7 @@
 "use client";
 
 import { GameImage } from "./GameImage";
-import { useGameSearch, type Game } from "../../hooks/useGameSearch";
+import { useGameSearch, type Game } from "@/hooks/useGameSearch";
 
 export type { Game };
 
@@ -27,7 +27,7 @@ export function GameSearch({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search for games..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border border-gamer-input-border rounded-lg bg-gamer-input text-gamer-text focus:outline-none focus:ring-2 focus:ring-gamer-primary transition-all"
             disabled={isLoading}
             autoFocus
           />
@@ -36,7 +36,7 @@ export function GameSearch({
 
       {/* Error State */}
       {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div className="mb-4 p-4 border border-danger rounded-lg bg-danger text-danger-foreground">
           {typeof error === "string" ? error : error.message}
         </div>
       )}
@@ -44,7 +44,7 @@ export function GameSearch({
       {/* Loading State */}
       {isLoading && (
         <div className="text-center py-8">
-          <div className="text-gray-600">Searching for games...</div>
+          <div className="text-gamer-muted">Searching for games...</div>
         </div>
       )}
 
@@ -54,7 +54,7 @@ export function GameSearch({
           {results.map((game) => (
             <div
               key={game.id}
-              className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+              className="border border-gamer-border rounded-lg p-4 bg-gamer-surface transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
             >
               <GameImage
                 coverImages={game.cover_images}
@@ -62,16 +62,16 @@ export function GameSearch({
                 alt={`${game.name} cover`}
                 className="w-full h-48 object-cover rounded mb-4"
               />
-              <h3 className="font-semibold text-lg mb-2">
+              <h3 className="font-semibold text-lg mb-2 text-gamer-text">
                 {game.name || "Unknown Title"}
               </h3>
               {game.release_year && (
-                <p className="text-gray-600 mb-1">
+                <p className="mb-1 text-gamer-muted">
                   Released: {game.release_year}
                 </p>
               )}
               {game.platforms && game.platforms.length > 0 && (
-                <p className="text-gray-600 text-sm">
+                <p className="text-sm text-gamer-muted">
                   Platforms: {game.platforms.join(", ")}
                 </p>
               )}
@@ -82,7 +82,7 @@ export function GameSearch({
 
       {/* No Results */}
       {!isLoading && hasQuery && !hasResults && !error && (
-        <div className="text-center py-8 text-gray-600">
+        <div className="text-center py-8 text-gamer-muted">
           No games found for &quot;{query}&quot;. Try a different search term.
         </div>
       )}

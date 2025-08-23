@@ -71,7 +71,9 @@ describe("GameEntryCard", () => {
   it("applies correct styling classes", () => {
     const { container } = render(<GameEntryCard entry={mockEntry} />);
 
-    // Should have a card-like container
-    expect(container.firstChild).toHaveClass("game-entry-card");
+    // Should have gamer theme card styling
+    expect(container.firstChild).toHaveClass("bg-gamer-surface");
+    expect(container.firstChild).toHaveClass("border-gamer-border");
+    expect(container.firstChild).toHaveClass("rounded-lg");
   });
 });

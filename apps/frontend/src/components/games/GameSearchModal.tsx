@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useGameSearch, Game } from "../../hooks/useGameSearch";
+import { useGameSearch, Game } from "@/hooks/useGameSearch";
 import Image from "next/image";
 
 interface GameSearchModalProps {
@@ -29,14 +29,14 @@ const GameSearchModal: React.FC<GameSearchModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-hidden">
+      <div className="bg-gamer-surface rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-hidden border border-gamer-border">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">
+          <h2 className="text-xl font-bold text-gamer-text">
             Add Game to &ldquo;{collectionName}&rdquo;
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gamer-muted hover:text-gamer-text transition-colors"
           >
             ✕
           </button>
@@ -49,35 +49,39 @@ const GameSearchModal: React.FC<GameSearchModalProps> = ({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search for games..."
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            className="w-full px-3 py-2 border border-gamer-input-border rounded bg-gamer-input text-gamer-text placeholder-gamer-muted focus:ring-gamer-primary focus:border-gamer-primary"
           />
         </div>
 
         {/* Search results */}
         <div className="overflow-y-auto max-h-96">
           {error && (
-            <div className="text-red-500 text-center py-4">Error: {error}</div>
+            <div className="text-gamer-danger text-center py-4">
+              Error: {error}
+            </div>
           )}
 
           {results.length === 0 && !isLoading && !error && query.trim() && (
-            <div className="text-gray-500 text-center py-8">
+            <div className="text-gamer-muted text-center py-8">
               No games found for &ldquo;{query}&rdquo;
             </div>
           )}
 
           {results.length === 0 && !isLoading && !error && !query.trim() && (
-            <div className="text-gray-500 text-center py-8">
+            <div className="text-gamer-muted text-center py-8">
               Search for games to add to your collection
             </div>
           )}
 
-          {isLoading && <div className="text-center py-8">Searching...</div>}
+          {isLoading && (
+            <div className="text-gamer-text text-center py-8">Searching...</div>
+          )}
 
           <div className="space-y-2">
             {results.map((game: Game) => (
               <div
                 key={game.id}
-                className="flex items-center justify-between p-3 border border-gray-200 rounded hover:bg-gray-50"
+                className="flex items-center justify-between p-3 border border-gamer-border rounded bg-gamer-elevated hover:bg-gamer-subtle transition-colors"
               >
                 <div className="flex items-center space-x-3">
                   {game.cover_images?.small && (
@@ -90,14 +94,14 @@ const GameSearchModal: React.FC<GameSearchModalProps> = ({
                     />
                   )}
                   <div>
-                    <h3 className="font-medium">{game.name}</h3>
+                    <h3 className="font-medium text-gamer-text">{game.name}</h3>
                     {game.platforms && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gamer-muted">
                         {game.platforms.slice(0, 3).join(", ")}
                       </p>
                     )}
                     {game.release_year && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gamer-muted">
                         {game.release_year}
                       </p>
                     )}
@@ -105,7 +109,7 @@ const GameSearchModal: React.FC<GameSearchModalProps> = ({
                 </div>
                 <button
                   onClick={() => handleAddGame(game)}
-                  className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm"
+                  className="bg-gamer-success hover:bg-green-600 text-white px-3 py-1 rounded text-sm transition-colors"
                 >
                   Add
                 </button>
