@@ -1,67 +1,55 @@
 "use client";
 
-import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "../store/auth";
-import LogoutButton from "./auth/LogoutButton";
+import LogoutButton from "@/components/auth/LogoutButton";
+import { User } from "@/store/auth";
 
-/**
- * Navigation component that shows different content based on auth state.
- * - When logged out: shows Login/Signup links
- * - When logged in: shows user info and Logout button
- */
-const Navigation: React.FC = () => {
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const user = useAuthStore((state) => state.user);
-
+export default function Navigation({ user }: { user: User | null }) {
   return (
-    <nav style={{ padding: "1rem", borderBottom: "1px solid #ccc" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div>
+    <nav className="bg-gamer-surface border-b border-gamer-border text-gamer-text">
+      <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="flex items-center space-x-8">
           <Link
             href="/"
-            style={{
-              fontSize: "1.2rem",
-              fontWeight: "bold",
-              textDecoration: "none",
-            }}
+            className="text-xl font-bold text-gamer-primary hover:text-gamer-primary-hover"
           >
-            Gaming Website
+            GameHub
+          </Link>
+          <Link
+            href="/library"
+            className="text-gamer-text hover:text-gamer-primary"
+          >
+            Collections
           </Link>
         </div>
-
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          {!isLoggedIn ? (
+        <div className="flex items-center space-x-4">
+          {user ? (
             <>
-              <Link href="/login" style={{ textDecoration: "none" }}>
-                Login
-              </Link>
-              <Link href="/signup" style={{ textDecoration: "none" }}>
-                Signup
-              </Link>
+              <span className="text-gamer-muted">
+                Welcome, {user?.username}!
+              </span>
+              <LogoutButton className="text-red-400 hover:text-red-300">
+                Logout
+              </LogoutButton>
             </>
           ) : (
             <>
-              {user?.email && (
-                <span style={{ marginRight: "1rem" }}>{user.email}</span>
-              )}
-              <Link href="/library" style={{ textDecoration: "none" }}>
-                My Library
+              <Link
+                href="/login"
+                className="text-gamer-text hover:text-gamer-primary"
+              >
+                Login
               </Link>
-              <LogoutButton />
+              <Link
+                href="/signup"
+                className="text-gamer-text hover:text-gamer-primary"
+              >
+                Sign Up
+              </Link>
             </>
           )}
         </div>
       </div>
     </nav>
   );
-};
-
-export default Navigation;
+}

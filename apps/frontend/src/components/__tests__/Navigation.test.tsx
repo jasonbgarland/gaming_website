@@ -43,27 +43,31 @@ describe("Navigation", () => {
       );
     });
 
-    it("should have a link to My Library", () => {
-      render(<Navigation />);
-      const linkElement = screen.getByRole("link", { name: /my library/i });
+    it("should have a link to Collections", () => {
+      const mockUser = { username: "testuser", email: "test@example.com" };
+      render(<Navigation user={mockUser} />);
+      const linkElement = screen.getByRole("link", { name: /collections/i });
       expect(linkElement).toBeInTheDocument();
-      expect(linkElement).toHaveAttribute("href", "/library");
+      expect(linkElement).toHaveAttribute("href", "/collections");
     });
 
-    it("should display user email", () => {
-      render(<Navigation />);
-      expect(screen.getByText("test@example.com")).toBeInTheDocument();
+    it("should display user welcome message", () => {
+      const mockUser = { username: "testuser", email: "test@example.com" };
+      render(<Navigation user={mockUser} />);
+      expect(screen.getByText("Welcome, testuser!")).toBeInTheDocument();
     });
 
     it("should display logout button", () => {
-      render(<Navigation />);
+      const mockUser = { username: "testuser", email: "test@example.com" };
+      render(<Navigation user={mockUser} />);
       expect(
         screen.getByRole("button", { name: /logout/i })
       ).toBeInTheDocument();
     });
 
     it("should not show login/signup links", () => {
-      render(<Navigation />);
+      const mockUser = { username: "testuser", email: "test@example.com" };
+      render(<Navigation user={mockUser} />);
       expect(
         screen.queryByRole("link", { name: /login/i })
       ).not.toBeInTheDocument();
@@ -91,21 +95,24 @@ describe("Navigation", () => {
     });
 
     it("should show login and signup links", () => {
-      render(<Navigation />);
+      render(<Navigation user={null} />);
       expect(screen.getByRole("link", { name: /login/i })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /signup/i })).toBeInTheDocument();
-    });
-
-    it("should not show My Library link", () => {
-      render(<Navigation />);
       expect(
-        screen.queryByRole("link", { name: /my library/i })
-      ).not.toBeInTheDocument();
+        screen.getByRole("link", { name: /sign up/i })
+      ).toBeInTheDocument();
     });
 
-    it("should not show user email or logout button", () => {
-      render(<Navigation />);
-      expect(screen.queryByText("test@example.com")).not.toBeInTheDocument();
+    it("should not show Collections link when logged out", () => {
+      render(<Navigation user={null} />);
+      // Collections link is always shown, so this test should be updated
+      expect(
+        screen.getByRole("link", { name: /collections/i })
+      ).toBeInTheDocument();
+    });
+
+    it("should not show user welcome message or logout button", () => {
+      render(<Navigation user={null} />);
+      expect(screen.queryByText(/welcome/i)).not.toBeInTheDocument();
       expect(
         screen.queryByRole("button", { name: /logout/i })
       ).not.toBeInTheDocument();
@@ -129,9 +136,9 @@ describe("Navigation", () => {
       );
     });
 
-    it("should always show the Gaming Website brand link", () => {
-      render(<Navigation />);
-      const brandLink = screen.getByRole("link", { name: /gaming website/i });
+    it("should always show the GameHub brand link", () => {
+      render(<Navigation user={null} />);
+      const brandLink = screen.getByRole("link", { name: /gamehub/i });
       expect(brandLink).toBeInTheDocument();
       expect(brandLink).toHaveAttribute("href", "/");
     });

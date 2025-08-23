@@ -66,7 +66,10 @@ const NavigationDemo: React.FC = () => {
         <div style={{ marginTop: "0.5rem", display: "flex", gap: "1rem" }}>
           <button
             onClick={() =>
-              login("demo-jwt-token", { email: "demo@example.com" })
+              login("demo-jwt-token", {
+                email: "demo@example.com",
+                username: "demouser",
+              })
             }
             disabled={isLoggedIn}
             style={{
