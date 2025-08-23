@@ -48,7 +48,7 @@ describe("Navigation", () => {
       render(<Navigation user={mockUser} />);
       const linkElement = screen.getByRole("link", { name: /collections/i });
       expect(linkElement).toBeInTheDocument();
-      expect(linkElement).toHaveAttribute("href", "/collections");
+      expect(linkElement).toHaveAttribute("href", "/library");
     });
 
     it("should display user welcome message", () => {

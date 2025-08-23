@@ -76,7 +76,7 @@ describe("LibraryPage", () => {
 
     render(<LibraryPage />);
 
-    const heading = screen.getByRole("heading", { name: /my library/i });
+    const heading = screen.getByRole("heading", { name: /collections/i });
     expect(heading).toBeInTheDocument();
   });
 
@@ -97,7 +97,7 @@ describe("LibraryPage", () => {
 
     render(<LibraryPage />);
 
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByText("Loading collections...")).toBeInTheDocument();
   });
 
   it("shows error state when API fails", () => {

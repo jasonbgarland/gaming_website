@@ -77,7 +77,7 @@ describe("LibraryPage - API Integration", () => {
     mockUseAuthStore.getState.mockReturnValue({
       token: "mock-jwt-token",
       isLoggedIn: true,
-      user: { email: "test@example.com" },
+      user: { email: "test@example.com", username: "testuser" },
       login: jest.fn(),
       logout: jest.fn(),
     });
@@ -115,11 +115,11 @@ describe("LibraryPage - API Integration", () => {
     renderWithFreshCache(<LibraryPage />);
 
     // Initially should show loading
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByText("Loading collections...")).toBeInTheDocument();
 
     // Wait for API call to complete
     await waitFor(() => {
-      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+      expect(screen.queryByText("Loading collections...")).not.toBeInTheDocument();
     });
 
     // Verify API was called with correct parameters

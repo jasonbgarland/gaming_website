@@ -52,7 +52,7 @@ describe("GameEntryGrid", () => {
     render(<GameEntryGrid entries={[]} />);
 
     expect(
-      screen.getByText(/no games in this collection/i)
+      screen.getByText(/no games yet!/i)
     ).toBeInTheDocument();
   });
 

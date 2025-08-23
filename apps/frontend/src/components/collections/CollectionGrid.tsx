@@ -33,7 +33,6 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
       ) : (
         <div
           className="text-center py-16 text-gamer-muted w-full flex flex-col items-center justify-center"
-          aria-live="polite"
         >
           <div className="mb-4">
             <svg
@@ -50,7 +49,7 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gamer-text mb-2">
+          <h3 className="text-lg font-medium text-gamer-text mb-2" aria-live="polite">
             No collections yet!
           </h3>
           <p className="text-gamer-muted">

@@ -34,7 +34,7 @@ const GameEntryGrid: React.FC<GameEntryGridProps> = ({
           No games yet!
         </h3>
         <p className="text-gamer-muted">
-          Click "Add Game" to start building your collection.
+          Click &quot;Add Game&quot; to start building your collection.
         </p>
       </div>
     );
