@@ -19,7 +19,14 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
   const { handleLogout } = useLogout();
 
   return (
-    <button type="button" onClick={handleLogout} className={className}>
+    <button
+      type="button"
+      onClick={handleLogout}
+      className={
+        className ||
+        "bg-gamer-secondary hover:bg-gamer-secondary-hover text-gamer-text font-medium px-4 py-2 rounded-md transition-colors duration-200 border border-gamer-border"
+      }
+    >
       {children}
     </button>
   );

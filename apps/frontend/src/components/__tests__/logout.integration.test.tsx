@@ -42,14 +42,18 @@ describe("Logout Integration Flow", () => {
     act(() => {
       useAuthStore
         .getState()
-        .login("test-token", { email: "test@example.com" });
+        .login("test-token", {
+          email: "test@example.com",
+          username: "testuser",
+        });
     });
 
-    // Render navigation
-    render(<Navigation />);
+    const mockUser = { email: "test@example.com", username: "testuser" };
+    // Render navigation with user
+    render(<Navigation user={mockUser} />);
 
-    // Should show user email and logout button (logged in state)
-    expect(screen.getByText("test@example.com")).toBeInTheDocument();
+    // Should show user welcome message and logout button (logged in state)
+    expect(screen.getByText("Welcome, testuser!")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /logout/i })).toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: /login/i })
@@ -76,18 +80,18 @@ describe("Logout Integration Flow", () => {
 
   it("should show login/signup links when logged out", () => {
     // Start with logged out state (default)
-    render(<Navigation />);
+    render(<Navigation user={null} />);
 
     // Should show login/signup links
     expect(screen.getByRole("link", { name: /login/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /signup/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /sign up/i })).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /logout/i })
     ).not.toBeInTheDocument();
   });
 
   it("should switch from logged out to logged in navigation when user logs in", () => {
-    const { rerender } = render(<Navigation />);
+    const { rerender } = render(<Navigation user={null} />);
 
     // Initially logged out
     expect(screen.getByRole("link", { name: /login/i })).toBeInTheDocument();
@@ -99,14 +103,18 @@ describe("Logout Integration Flow", () => {
     act(() => {
       useAuthStore
         .getState()
-        .login("test-token", { email: "test@example.com" });
+        .login("test-token", {
+          email: "test@example.com",
+          username: "testuser",
+        });
     });
 
-    // Rerender to pick up state change
-    rerender(<Navigation />);
+    // Rerender with logged in user to pick up state change
+    const mockUser = { email: "test@example.com", username: "testuser" };
+    rerender(<Navigation user={mockUser} />);
 
     // Now should show logged in state
-    expect(screen.getByText("test@example.com")).toBeInTheDocument();
+    expect(screen.getByText("Welcome, testuser!")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /logout/i })).toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: /login/i })
