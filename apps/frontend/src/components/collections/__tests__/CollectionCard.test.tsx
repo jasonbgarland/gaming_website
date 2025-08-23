@@ -59,14 +59,15 @@ describe("CollectionCard", () => {
     render(<CollectionCard collection={mockCollection} {...mockHandlers} />);
 
     const card = screen.getByRole("button", { name: /view favorite rpgs/i });
+    const deleteButton = screen.getByText("Delete");
 
-    // Actions should be hidden initially
-    expect(screen.queryByText("Delete")).not.toBeVisible();
+    // Actions should be hidden initially (with opacity-0 invisible)
+    expect(deleteButton.parentElement).toHaveClass("opacity-0", "invisible");
 
     // Hover to show actions
     fireEvent.mouseEnter(card);
 
-    expect(screen.getByText("Delete")).toBeVisible();
+    expect(deleteButton.parentElement).toHaveClass("opacity-100", "visible");
   });
 
   it("calls onDelete when delete button is clicked", () => {
@@ -86,14 +87,15 @@ describe("CollectionCard", () => {
     render(<CollectionCard collection={mockCollection} {...mockHandlers} />);
 
     const card = screen.getByRole("button", { name: /view favorite rpgs/i });
+    const deleteButton = screen.getByText("Delete");
 
     // Show actions on hover
     fireEvent.mouseEnter(card);
-    expect(screen.getByText("Delete")).toBeVisible();
+    expect(deleteButton.parentElement).toHaveClass("opacity-100", "visible");
 
     // Hide actions when mouse leaves
     fireEvent.mouseLeave(card);
-    expect(screen.queryByText("Delete")).not.toBeVisible();
+    expect(deleteButton.parentElement).toHaveClass("opacity-0", "invisible");
   });
 
   it("has proper accessibility attributes", () => {
@@ -152,14 +154,15 @@ describe("CollectionCard", () => {
     const card = screen.getByRole("button", {
       name: /view favorite rpgs collection/i,
     });
+    const deleteButton = screen.getByText("Delete");
 
     // Actions should be hidden initially
-    expect(screen.queryByText("Delete")).not.toBeVisible();
+    expect(deleteButton.parentElement).toHaveClass("opacity-0", "invisible");
 
     // Focus to show actions
     fireEvent.focus(card);
 
-    expect(screen.getByText("Delete")).toBeVisible();
+    expect(deleteButton.parentElement).toHaveClass("opacity-100", "visible");
   });
 
   it("hides action buttons when card loses focus", () => {
@@ -168,14 +171,15 @@ describe("CollectionCard", () => {
     const card = screen.getByRole("button", {
       name: /view favorite rpgs collection/i,
     });
+    const deleteButton = screen.getByText("Delete");
 
     // Focus to show actions
     fireEvent.focus(card);
-    expect(screen.getByText("Delete")).toBeVisible();
+    expect(deleteButton.parentElement).toHaveClass("opacity-100", "visible");
 
     // Blur to hide actions
     fireEvent.blur(card);
-    expect(screen.queryByText("Delete")).not.toBeVisible();
+    expect(deleteButton.parentElement).toHaveClass("opacity-0", "invisible");
   });
 
   // Enhanced ARIA Label Tests

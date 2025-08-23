@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, within } from "@testing-library/react";
-import CollectionGrid from "../CollectionGrid";
+import CollectionGrid from "../../collections/CollectionGrid";
 import { CollectionWithCount } from "../../../hooks/useCollectionsWithCounts";
 
 describe("CollectionGrid", () => {

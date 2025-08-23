@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Collection } from "../../services/collectionsApi";
+import { Collection } from "@/services/collectionsApi";
 
 interface CollectionCardProps {
   collection: Collection & { gameCount?: number };
@@ -39,86 +39,36 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
     <div
       role="button"
       tabIndex={0}
-      className="collection-card"
+      className="w-full p-4 border border-gamer-border rounded-lg bg-gamer-surface cursor-pointer text-left relative transition-all duration-200 hover:bg-gamer-elevated hover:scale-[1.02] hover:shadow-lg focus:bg-gamer-elevated focus:outline-none focus:ring-2 focus:ring-gamer-primary"
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       aria-label={`View ${collection.name} collection`}
-      style={{
-        display: "block",
-        width: "100%",
-        padding: "1rem",
-        border: "1px solid #e5e5e5",
-        borderRadius: "8px",
-        backgroundColor: "white",
-        cursor: "pointer",
-        textAlign: "left",
-        position: "relative",
-        transition: "box-shadow 0.2s ease",
-        boxShadow: isHovered ? "0 4px 12px rgba(0,0,0,0.1)" : "none",
-        outline: "none", // We'll handle focus styling manually
-      }}
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
     >
       <div className="card-content">
-        <h3
-          style={{
-            margin: "0 0 0.5rem 0",
-            fontSize: "1.25rem",
-            fontWeight: "600",
-            color: "#1f2937",
-          }}
-        >
+        <h3 className="m-0 mb-2 text-xl font-semibold text-gamer-text">
           {collection.name}
         </h3>
-        <p
-          style={{
-            margin: "0 0 0.75rem 0",
-            color: "#6b7280",
-            fontSize: "0.875rem",
-            lineHeight: "1.4",
-          }}
-        >
+        <p className="m-0 mb-3 text-gamer-muted text-sm leading-relaxed">
           {collection.description}
         </p>
-        <span
-          style={{
-            fontSize: "0.75rem",
-            color: "#9ca3af",
-            fontWeight: "500",
-          }}
-        >
+        <span className="text-xs text-gamer-subtle-text font-medium">
           {collection.gameCount ?? 0} games
         </span>
       </div>
 
       <div
-        className="card-actions"
-        style={{
-          position: "absolute",
-          top: "1rem",
-          right: "1rem",
-          display: "flex",
-          gap: "0.5rem",
-          opacity: isHovered ? 1 : 0,
-          visibility: isHovered ? "visible" : "hidden",
-          transition: "opacity 0.2s ease, visibility 0.2s ease",
-        }}
+        className={`absolute top-4 right-4 flex gap-2 transition-all duration-200 ${
+          isHovered ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
       >
         <button
           onClick={(e) => handleActionClick(e, onDelete)}
           aria-label={`Delete ${collection.name} collection`}
-          style={{
-            padding: "0.25rem 0.5rem",
-            fontSize: "0.75rem",
-            backgroundColor: "#fef2f2",
-            border: "1px solid #fecaca",
-            borderRadius: "4px",
-            cursor: "pointer",
-            color: "#dc2626",
-          }}
+          className="px-2 py-1 text-xs bg-gamer-surface border border-gamer-danger rounded text-gamer-danger cursor-pointer hover:bg-gamer-danger hover:text-white transition-colors"
         >
           Delete
         </button>

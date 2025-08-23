@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { Collection } from "../../services/collectionsApi";
-import { useCollectionEntries } from "hooks/useCollectionEntries";
-import GameEntryGrid from "components/games/GameEntryGrid";
-import GameSearchModal from "components/games/GameSearchModal";
-import { Game } from "../../hooks/useGameSearch";
+import { Collection } from "@/services/collectionsApi";
+import { useCollectionEntries } from "@/hooks/useCollectionEntries";
+import GameEntryGrid from "@/components/games/GameEntryGrid";
+import GameSearchModal from "@/components/games/GameSearchModal";
+import { Game } from "@/hooks/useGameSearch";
 
 interface CollectionDetailProps {
   collection: Collection;
@@ -58,24 +58,38 @@ const CollectionDetail: React.FC<CollectionDetailProps> = ({
 
   // Helper function for rendering entries block
   function renderEntries() {
-    if (entriesIsLoading) return <p>Loading entries...</p>;
-    if (entriesError) return <p>Error loading entries.</p>;
+    if (entriesIsLoading) {
+      return (
+        <div className="text-center py-8">
+          <div className="text-gamer-muted">Loading games...</div>
+        </div>
+      );
+    }
+    if (entriesError) {
+      return (
+        <div className="text-gamer-danger bg-gamer-surface border border-gamer-danger p-4 rounded-lg">
+          Error loading games: {entriesError}
+        </div>
+      );
+    }
     // GameEntryGrid handles empty state internally
     return <GameEntryGrid entries={entries} onRemoveGame={handleRemoveGame} />;
   }
 
   return (
-    <div className="space-y-6">
+    <div className="p-8 space-y-6">
       {/* Header with collection info and actions */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold">{collection.name}</h1>
-          <p className="text-gray-600 mt-2">{collection.description}</p>
+          <h1 className="text-3xl font-bold text-gamer-text">
+            {collection.name}
+          </h1>
+          <p className="text-gamer-muted mt-2">{collection.description}</p>
         </div>
         <div className="space-x-2">
           <button
             onClick={() => setShowAddGameModal(true)}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+            className="bg-gamer-primary hover:bg-gamer-primary-hover text-white px-4 py-2 rounded-lg font-medium transition-colors"
           >
             Add Game
           </button>
@@ -84,7 +98,7 @@ const CollectionDetail: React.FC<CollectionDetailProps> = ({
 
       {/* Games in collection */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">
+        <h2 className="text-xl font-semibold mb-4 text-gamer-text">
           Games ({entries?.length || 0})
         </h2>
         {renderEntries()}

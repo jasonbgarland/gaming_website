@@ -29,34 +29,13 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
 
   return (
     <div
-      className="modal-overlay"
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000,
-      }}
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
       onClick={handleOverlayClick}
       onKeyDown={handleKeyDown}
       tabIndex={-1}
     >
       <div
-        className="modal-content"
-        style={{
-          backgroundColor: "white",
-          borderRadius: "8px",
-          padding: "2rem",
-          maxWidth: "400px",
-          width: "90%",
-          boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
-          outline: "none",
-        }}
+        className="bg-gamer-surface rounded-lg border border-gamer-border p-6 max-w-md w-full shadow-2xl"
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-modal-title"
@@ -64,78 +43,35 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
       >
         <h2
           id="delete-modal-title"
-          style={{
-            margin: "0 0 1rem 0",
-            fontSize: "1.25rem",
-            fontWeight: "600",
-            color: "#dc2626",
-          }}
+          className="text-xl font-semibold text-gamer-danger mb-4"
         >
           Delete Collection
         </h2>
 
         <p
           id="delete-modal-description"
-          style={{
-            margin: "0 0 2rem 0",
-            color: "#4b5563",
-            lineHeight: "1.5",
-          }}
+          className="text-gamer-text mb-6 leading-relaxed"
         >
           Are you sure you want to delete &ldquo;
-          <strong>{collectionName}</strong>&rdquo;? This action cannot be undone
-          and will remove all games from this collection.
+          <strong className="text-gamer-text font-medium">
+            {collectionName}
+          </strong>
+          &rdquo;? This action cannot be undone and will remove all games from
+          this collection.
         </p>
 
-        <div
-          className="modal-actions"
-          style={{
-            display: "flex",
-            gap: "0.75rem",
-            justifyContent: "flex-end",
-          }}
-        >
+        <div className="flex gap-3 justify-end">
           <button
             onClick={onCancel}
-            style={{
-              padding: "0.5rem 1rem",
-              border: "1px solid #d1d5db",
-              borderRadius: "6px",
-              backgroundColor: "white",
-              color: "#374151",
-              cursor: "pointer",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "#f9fafb";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "white";
-            }}
+            className="bg-gamer-secondary hover:bg-gamer-secondary-hover text-gamer-text font-medium py-2 px-4 rounded-md transition-colors duration-200 border border-gamer-border"
           >
             Cancel
           </button>
 
           <button
             onClick={onConfirm}
-            style={{
-              padding: "0.5rem 1rem",
-              border: "1px solid #dc2626",
-              borderRadius: "6px",
-              backgroundColor: "#dc2626",
-              color: "white",
-              cursor: "pointer",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "#b91c1c";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "#dc2626";
-            }}
             autoFocus
+            className="bg-gamer-danger hover:bg-gamer-danger-hover text-white font-medium py-2 px-4 rounded-md transition-colors duration-200"
           >
             Delete Collection
           </button>

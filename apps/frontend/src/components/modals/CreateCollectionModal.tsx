@@ -114,55 +114,97 @@ const CreateCollectionModal = ({
       role="dialog"
       aria-modal="true"
       onClick={handleOverlayClick}
-      style={
-        {
-          /* overlay styles */
-        }
-      }
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
     >
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="collection-name">Collection Name</label>
-        <input
-          ref={nameInputRef}
-          id="collection-name"
-          aria-label="collection name"
-          required
-          maxLength={50}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={handleNameKeyDown}
-        />
-        {errors.name && (
-          <div style={{ color: "red" }} role="alert">
-            {errors.name}
-          </div>
-        )}
-        <label htmlFor="collection-description">Description</label>
-        <input
-          id="collection-description"
-          aria-label="description"
-          maxLength={200}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        {errors.description && (
-          <div style={{ color: "red" }} role="alert">
-            {errors.description}
-          </div>
-        )}
-        {errors.form && (
-          <div style={{ color: "red" }} role="alert">
-            {errors.form}
-          </div>
-        )}
+      <div className="bg-gamer-surface rounded-lg border border-gamer-border p-6 w-full max-w-md shadow-2xl">
+        <h2 className="text-xl font-semibold text-gamer-text mb-6">
+          Create New Collection
+        </h2>
 
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save"}
-        </button>
-        <button type="button" onClick={onClose}>
-          Cancel
-        </button>
-      </form>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="collection-name"
+              className="block text-gamer-text font-medium mb-2"
+            >
+              Collection Name
+            </label>
+            <input
+              ref={nameInputRef}
+              id="collection-name"
+              aria-label="collection name"
+              required
+              maxLength={50}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={handleNameKeyDown}
+              className="w-full px-3 py-2 bg-gamer-input border border-gamer-input-border rounded-md text-gamer-text placeholder-gamer-muted focus:outline-none focus:ring-2 focus:ring-gamer-primary focus:border-transparent"
+              placeholder="Enter collection name"
+            />
+            {errors.name && (
+              <div
+                className="bg-gamer-danger/10 border border-gamer-danger/20 text-gamer-danger px-3 py-2 rounded-md text-sm mt-2"
+                role="alert"
+              >
+                {errors.name}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="collection-description"
+              className="block text-gamer-text font-medium mb-2"
+            >
+              Description
+            </label>
+            <textarea
+              id="collection-description"
+              aria-label="description"
+              maxLength={200}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 bg-gamer-input border border-gamer-input-border rounded-md text-gamer-text placeholder-gamer-muted focus:outline-none focus:ring-2 focus:ring-gamer-primary focus:border-transparent resize-none"
+              placeholder="Optional description for your collection"
+            />
+            {errors.description && (
+              <div
+                className="bg-gamer-danger/10 border border-gamer-danger/20 text-gamer-danger px-3 py-2 rounded-md text-sm mt-2"
+                role="alert"
+              >
+                {errors.description}
+              </div>
+            )}
+          </div>
+
+          {errors.form && (
+            <div
+              className="bg-gamer-danger/10 border border-gamer-danger/20 text-gamer-danger px-3 py-2 rounded-md text-sm"
+              role="alert"
+            >
+              {errors.form}
+            </div>
+          )}
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 bg-gamer-secondary hover:bg-gamer-secondary-hover text-gamer-text font-medium py-2 px-4 rounded-md transition-colors duration-200 border border-gamer-border"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex-1 bg-gamer-primary hover:bg-gamer-primary-hover text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Saving..." : "Save"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
