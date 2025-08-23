@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import CollectionGrid from "../../components/collections/CollectionGrid";
-import { useCollectionsWithCounts } from "hooks/useCollectionsWithCounts";
+import { useCollectionsWithCounts } from "@/hooks/useCollectionsWithCounts";
 import CreateCollectionModal from "../../components/modals/CreateCollectionModal";
 import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";
 
@@ -75,18 +75,32 @@ const LibraryPage: React.FC = () => {
 
   if (error) {
     return (
-      <div style={{ padding: "2rem" }}>
-        <h1>My Library</h1>
-        <div>Error loading collections: {error.message}</div>
+      <div className="p-8 bg-gamer-dark min-h-screen">
+        <h1 className="text-3xl font-bold text-gamer-text mb-6">Collections</h1>
+        <div className="text-gamer-danger bg-gamer-surface border border-gamer-danger p-4 rounded-lg">
+          Error loading collections: {error.message}
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>My Library</h1>
+    <div className="p-8 bg-gamer-dark min-h-screen">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gamer-text">Collections</h1>
+        <button
+          type="button"
+          onClick={() => setShowCreateCollectionModal(true)}
+          className="bg-gamer-primary hover:bg-gamer-primary-hover text-white px-6 py-3 rounded-lg font-medium transition-colors"
+        >
+          Create Collection
+        </button>
+      </div>
+
       {isLoading ? (
-        <div>Loading...</div>
+        <div className="text-center py-12">
+          <div className="text-gamer-muted text-lg">Loading collections...</div>
+        </div>
       ) : (
         <React.Fragment>
           <CollectionGrid
@@ -94,13 +108,6 @@ const LibraryPage: React.FC = () => {
             onDelete={handleDelete}
             onViewCollection={handleViewCollection}
           />
-          <button
-            type="button"
-            onClick={() => setShowCreateCollectionModal(true)}
-            style={{ marginTop: "1rem" }}
-          >
-            Create Collection
-          </button>
           {showCreateCollectionModal && (
             <CreateCollectionModal
               open={showCreateCollectionModal}

@@ -3,12 +3,12 @@ import { render, screen } from "@testing-library/react";
 import CollectionDetailPage from "../page";
 
 import * as nextNavigation from "next/navigation";
-import { useCollection } from "hooks/useCollection";
-import { useCollectionEntries } from "hooks/useCollectionEntries";
+import { useCollection } from "@/hooks/useCollection";
+import { useCollectionEntries } from "@/hooks/useCollectionEntries";
 
 jest.mock("next/navigation");
-jest.mock("hooks/useCollection");
-jest.mock("hooks/useCollectionEntries");
+jest.mock("@/hooks/useCollection");
+jest.mock("@/hooks/useCollectionEntries");
 
 const mockUseParams = nextNavigation.useParams as jest.Mock;
 const mockUseCollection = useCollection as jest.Mock;

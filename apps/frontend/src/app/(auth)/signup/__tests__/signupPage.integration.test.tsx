@@ -73,7 +73,19 @@ describe("SignupPage integration", () => {
       token_type: "bearer",
     });
     const mockResponse = { ok: true, json: mockJsonFn };
-    mockApi.mockResolvedValueOnce(mockResponse);
+
+    // Mock the /me endpoint response
+    const mockMeJsonFn = jest.fn().mockResolvedValue({
+      username: "testuser",
+      email: "test@example.com",
+    });
+    const mockMeResponse = { ok: true, json: mockMeJsonFn };
+
+    // First call for signup, second call for /me
+    mockApi
+      .mockResolvedValueOnce(mockResponse)
+      .mockResolvedValueOnce(mockMeResponse);
+
     render(<SignupPage />);
     const user = userEvent.setup();
     const usernameInput = screen.getByLabelText(/username/i);
@@ -101,9 +113,26 @@ describe("SignupPage integration", () => {
         })
       );
     });
-    // Verify store login was called with correct token
+
+    // Verify /me endpoint was called
     await waitFor(() => {
-      expect(mockLogin).toHaveBeenCalledWith("fake-jwt-token");
+      expect(mockApi).toHaveBeenCalledWith(
+        "http://localhost:8001/me",
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: "Bearer fake-jwt-token",
+            "Content-Type": "application/json",
+          }),
+        })
+      );
+    });
+
+    // Verify store login was called with correct token and user data
+    await waitFor(() => {
+      expect(mockLogin).toHaveBeenCalledWith("fake-jwt-token", {
+        username: "testuser",
+        email: "test@example.com",
+      });
     });
     // Verify redirect happened
     await waitFor(() => {

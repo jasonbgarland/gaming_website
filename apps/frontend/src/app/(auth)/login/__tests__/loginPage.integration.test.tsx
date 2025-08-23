@@ -91,7 +91,19 @@ describe("LoginPage integration", () => {
       token_type: "bearer",
     });
     const mockResponse = { ok: true, json: mockJsonFn };
-    mockApi.mockResolvedValueOnce(mockResponse);
+
+    // Mock the /me endpoint response
+    const mockMeJsonFn = jest.fn().mockResolvedValue({
+      username: "testuser",
+      email: "test@example.com",
+    });
+    const mockMeResponse = { ok: true, json: mockMeJsonFn };
+
+    // First call for login, second call for /me
+    mockApi
+      .mockResolvedValueOnce(mockResponse)
+      .mockResolvedValueOnce(mockMeResponse);
+
     render(<LoginPage />);
     const user = userEvent.setup();
     const emailInput = screen.getByLabelText(/email/i);
@@ -115,9 +127,24 @@ describe("LoginPage integration", () => {
         })
       );
     });
-    // Verify store login was called with correct token
+
+    // Verify /me endpoint was called
+    await waitFor(() => {
+      expect(mockApi).toHaveBeenCalledWith(
+        "http://localhost:8001/me",
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: "Bearer fake-jwt-token",
+            "Content-Type": "application/json",
+          }),
+        })
+      );
+    });
+
+    // Verify store login was called with correct token and user data
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledWith("fake-jwt-token", {
+        username: "testuser",
         email: "test@example.com",
       });
     });
@@ -186,7 +213,19 @@ describe("LoginPage integration", () => {
       token_type: "bearer",
     });
     const mockResponse = { ok: true, json: mockJsonFn };
-    mockApi.mockResolvedValueOnce(mockResponse);
+
+    // Mock the /me endpoint response
+    const mockMeJsonFn = jest.fn().mockResolvedValue({
+      username: "testuser",
+      email: "test@example.com",
+    });
+    const mockMeResponse = { ok: true, json: mockMeJsonFn };
+
+    // Mock both login and /me responses
+    mockApi
+      .mockResolvedValueOnce(mockResponse)
+      .mockResolvedValueOnce(mockMeResponse);
+
     render(<LoginPage />);
     const user = userEvent.setup();
     const emailInput = screen.getByLabelText(/email/i);
@@ -200,8 +239,9 @@ describe("LoginPage integration", () => {
       user.click(submitButton),
       user.click(submitButton),
     ]);
+    // Should make exactly 2 calls total: 1 for login, 1 for /me (not more due to rapid clicking)
     await waitFor(() => {
-      expect(mockApi).toHaveBeenCalledTimes(1);
+      expect(mockApi).toHaveBeenCalledTimes(2);
     });
     await waitFor(() => {
       expect(submitButton).not.toBeDisabled();

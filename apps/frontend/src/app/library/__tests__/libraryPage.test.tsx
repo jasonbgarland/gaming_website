@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { useRouter } from "next/navigation";
 import LibraryPage from "../page";
-import { Collection } from "services/collectionsApi";
+import { Collection } from "@/services/collectionsApi";
 
 // Mock Next.js router
 jest.mock("next/navigation", () => ({

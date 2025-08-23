@@ -77,8 +77,29 @@ export function useSignup() {
         return;
       }
 
-      // Update global auth state (Zustand will handle localStorage persistence)
-      login(data.access_token);
+      // Get user information using the token
+      try {
+        const meResponse = await fetch(`${API_URL}/me`, {
+          headers: {
+            Authorization: `Bearer ${data.access_token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!meResponse.ok) {
+          setError("Unexpected error: Could not get user information.");
+          return;
+        }
+
+        const userData = await meResponse.json();
+
+        // Update global auth state (Zustand will handle localStorage persistence)
+        login(data.access_token, userData);
+      } catch {
+        setError("Network error: Could not get user information.");
+        return;
+      }
+
       // Redirect user to home page after successful signup
       router.push("/");
     } catch {

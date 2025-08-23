@@ -11,9 +11,13 @@ import { useLogin } from "./useLogin";
 const LoginPage: React.FC = () => {
   const { handleLogin, isLoading, error } = useLogin();
   return (
-    <main>
-      <h1>Login</h1>
-      <LoginForm onSubmit={handleLogin} isLoading={isLoading} error={error} />
+    <main className="min-h-screen bg-gamer-dark flex items-center justify-center p-8">
+      <div className="w-full max-w-md">
+        <h1 className="text-3xl font-bold text-gamer-text mb-8 text-center">
+          Login
+        </h1>
+        <LoginForm onSubmit={handleLogin} isLoading={isLoading} error={error} />
+      </div>
     </main>
   );
 };

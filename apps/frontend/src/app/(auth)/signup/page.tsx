@@ -11,9 +11,17 @@ import { useSignup } from "./useSignup";
 const SignupPage: React.FC = () => {
   const { handleSignup, isLoading, error } = useSignup();
   return (
-    <main>
-      <h1>Sign Up</h1>
-      <SignupForm onSubmit={handleSignup} isLoading={isLoading} error={error} />
+    <main className="min-h-screen bg-gamer-dark flex items-center justify-center p-8">
+      <div className="w-full max-w-md">
+        <h1 className="text-3xl font-bold text-gamer-text mb-8 text-center">
+          Sign Up
+        </h1>
+        <SignupForm
+          onSubmit={handleSignup}
+          isLoading={isLoading}
+          error={error}
+        />
+      </div>
     </main>
   );
 };
