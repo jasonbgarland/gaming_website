@@ -31,7 +31,10 @@ cp .env.example .env
 #### For Development (Recommended)
 
 ```sh
-# Fast development with hot reloading for all services
+# Option 1: Use the convenient startup script
+./dev-start.sh
+
+# Option 2: Manual command for development with hot reloading
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 
 # Or run in detached mode
@@ -47,6 +50,8 @@ docker-compose up --build
 # Or run in detached mode
 docker-compose up -d --build
 ```
+
+**⚠️ Important**: The main `docker-compose.yml` is configured for production use. For development with hot reloading, always use the `-f docker-compose.dev.yml` override or the `./dev-start.sh` script.
 
 This will start:
 
