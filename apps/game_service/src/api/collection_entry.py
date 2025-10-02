@@ -196,7 +196,7 @@ def update_collection_entry(
             collection_id=collection_id,
             entry_id=entry_id,
             user_id=user_id,
-            update_data=update_data.dict(exclude_unset=True),
+            update_data=update_data.model_dump(exclude_unset=True),
             db=db,
         )
         return result

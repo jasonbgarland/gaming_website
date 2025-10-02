@@ -207,7 +207,7 @@ class TestUpdateCollectionEntry(BaseCollectionEntryAPITest):
         # Delete the entry directly via DB
 
         db = TestingSessionLocal()
-        db.delete(db.query(CollectionEntry).get(entry_id))
+        db.delete(db.get(CollectionEntry, entry_id))
         db.commit()
         db.close()
         update_payload = {"notes": "Should not work"}
@@ -234,7 +234,7 @@ class TestUpdateCollectionEntry(BaseCollectionEntryAPITest):
         entry_id = create_resp.json()["id"]
         # Delete the collection directly via DB
         db = TestingSessionLocal()
-        db.delete(db.query(Collection).get(self.test_collection.id))
+        db.delete(db.get(Collection, self.test_collection.id))
         db.commit()
         db.close()
         update_payload = {"notes": "Should not work"}

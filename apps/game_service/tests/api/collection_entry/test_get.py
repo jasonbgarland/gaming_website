@@ -16,13 +16,21 @@ from tests.utils import MOCK_IGDB_GAME, setup_mock_igdb_client
 class TestListCollectionEntries(BaseCollectionEntryAPITest):
     """Test cases for GET /collections/{collection_id}/entries/ endpoint."""
 
-    @patch("apps.game_service.src.api.collection_entry.IGDBClient")
-    async def test_list_entries_success(self, mock_igdb_client_class):
+    @patch("src.api.collection_entry.IGDBClient")
+    def test_list_entries_success(self, mock_igdb_client_class):
         """
         Should list all entries in a collection successfully.
         """
         mock_igdb_client = Mock()
-        setup_mock_igdb_client(mock_igdb_client, MOCK_IGDB_GAME)
+
+        # Set up different mock games for different IDs to avoid duplicates
+        def mock_get_game_by_id(game_id):
+            base_game = MOCK_IGDB_GAME.copy()
+            base_game["name"] = f"Mock Game {game_id}"
+            base_game["id"] = game_id
+            return base_game
+
+        mock_igdb_client.get_game_by_id.side_effect = mock_get_game_by_id
         mock_igdb_client_class.return_value = mock_igdb_client
 
         # Create multiple entries
@@ -33,7 +41,7 @@ class TestListCollectionEntries(BaseCollectionEntryAPITest):
         ]
 
         for entry in entries:
-            response = await self.client.post(
+            response = self.client.post(
                 f"/collections/{self.test_collection.id}/entries/",
                 json=entry,
                 headers=self.headers,
@@ -41,7 +49,7 @@ class TestListCollectionEntries(BaseCollectionEntryAPITest):
             self.assertEqual(response.status_code, 201)
 
         # List the entries
-        response = await self.client.get(
+        response = self.client.get(
             f"/collections/{self.test_collection.id}/entries/", headers=self.headers
         )
 
@@ -62,11 +70,11 @@ class TestListCollectionEntries(BaseCollectionEntryAPITest):
         self.assertIn("Second entry", notes)
         self.assertIn("Third entry", notes)
 
-    async def test_list_entries_empty(self):
+    def test_list_entries_empty(self):
         """
         Should return an empty list for a collection with no entries.
         """
-        response = await self.client.get(
+        response = self.client.get(
             f"/collections/{self.test_collection.id}/entries/", headers=self.headers
         )
         self.assertEqual(response.status_code, 200)
@@ -74,28 +82,28 @@ class TestListCollectionEntries(BaseCollectionEntryAPITest):
         self.assertEqual(len(results), 0)
         self.assertEqual(results, [])
 
-    async def test_list_entries_unauthorized(self):
+    def test_list_entries_unauthorized(self):
         """
         Should return 401 Unauthorized if no JWT is provided.
         """
-        response = await self.client.get(
+        response = self.client.get(
             f"/collections/{self.test_collection.id}/entries/",
             # No headers
         )
         self.assertEqual(response.status_code, 401)
 
-    async def test_list_entries_invalid_collection_id(self):
+    def test_list_entries_invalid_collection_id(self):
         """
         Should return 422 Unprocessable Entity for invalid collection_id.
         """
-        response = await self.client.get(
+        response = self.client.get(
             "/collections/abc/entries/",  # Invalid ID (not an integer)
             headers=self.headers,
         )
         self.assertEqual(response.status_code, 422)
 
-    @patch("apps.game_service.src.api.collection_entry.IGDBClient")
-    async def test_list_entries_nonexistent_collection(self, mock_igdb_client_class):
+    @patch("src.api.collection_entry.IGDBClient")
+    def test_list_entries_nonexistent_collection(self, mock_igdb_client_class):
         """
         Should return 404 Not Found if collection doesn't exist.
         """
@@ -103,15 +111,15 @@ class TestListCollectionEntries(BaseCollectionEntryAPITest):
         setup_mock_igdb_client(mock_igdb_client, MOCK_IGDB_GAME)
         mock_igdb_client_class.return_value = mock_igdb_client
 
-        response = await self.client.get(
+        response = self.client.get(
             "/collections/999/entries/",  # Nonexistent collection ID
             headers=self.headers,
         )
         self.assertEqual(response.status_code, 404)
         self.assertIn("Collection not found", response.json()["detail"])
 
-    @patch("apps.game_service.src.api.collection_entry.IGDBClient")
-    async def test_list_entries_permission_denied(self, mock_igdb_client_class):
+    @patch("src.api.collection_entry.IGDBClient")
+    def test_list_entries_permission_denied(self, mock_igdb_client_class):
         """
         Should return 403 Forbidden if user doesn't own the collection.
         """
@@ -130,7 +138,7 @@ class TestListCollectionEntries(BaseCollectionEntryAPITest):
         )
 
         # Try to list entries with original user's token
-        response = await self.client.get(
+        response = self.client.get(
             f"/collections/{other_collection.id}/entries/",
             headers=self.headers,  # Using user 1's token
         )
@@ -141,8 +149,8 @@ class TestListCollectionEntries(BaseCollectionEntryAPITest):
 class TestGetCollectionEntry(BaseCollectionEntryAPITest):
     """Test cases for GET /collections/{collection_id}/entries/{entry_id} endpoint."""
 
-    @patch("apps.game_service.src.api.collection_entry.IGDBClient")
-    async def test_get_entry_success(self, mock_igdb_client_class):
+    @patch("src.api.collection_entry.IGDBClient")
+    def test_get_entry_success(self, mock_igdb_client_class):
         """
         Should get a single entry by ID successfully.
         """
@@ -152,7 +160,7 @@ class TestGetCollectionEntry(BaseCollectionEntryAPITest):
 
         # Create an entry first
         data = {"game_id": 1, "notes": "Details test"}
-        create_response = await self.client.post(
+        create_response = self.client.post(
             f"/collections/{self.test_collection.id}/entries/",
             json=data,
             headers=self.headers,
@@ -161,7 +169,7 @@ class TestGetCollectionEntry(BaseCollectionEntryAPITest):
         entry_id = create_response.json()["id"]
 
         # Get the entry by ID
-        get_response = await self.client.get(
+        get_response = self.client.get(
             f"/collections/{self.test_collection.id}/entries/{entry_id}",
             headers=self.headers,
         )
@@ -175,49 +183,49 @@ class TestGetCollectionEntry(BaseCollectionEntryAPITest):
         self.assertEqual(result["collection_id"], self.test_collection.id)
         self.assertIn("added_at", result)
 
-    async def test_get_entry_unauthorized(self):
+    def test_get_entry_unauthorized(self):
         """
         Should return 401 Unauthorized if no JWT is provided.
         """
-        response = await self.client.get(
+        response = self.client.get(
             f"/collections/{self.test_collection.id}/entries/1",
             # No headers
         )
         self.assertEqual(response.status_code, 401)
 
-    async def test_get_entry_invalid_collection_id(self):
+    def test_get_entry_invalid_collection_id(self):
         """
         Should return 422 Unprocessable Entity for invalid collection_id.
         """
-        response = await self.client.get(
+        response = self.client.get(
             "/collections/abc/entries/1",  # Invalid ID (not an integer)
             headers=self.headers,
         )
         self.assertEqual(response.status_code, 422)
 
-    async def test_get_entry_invalid_entry_id(self):
+    def test_get_entry_invalid_entry_id(self):
         """
         Should return 422 Unprocessable Entity for invalid entry_id.
         """
-        response = await self.client.get(
+        response = self.client.get(
             f"/collections/{self.test_collection.id}/entries/abc",  # Invalid ID (not an integer)
             headers=self.headers,
         )
         self.assertEqual(response.status_code, 422)
 
-    async def test_get_entry_not_found(self):
+    def test_get_entry_not_found(self):
         """
         Should return 404 Not Found if entry doesn't exist.
         """
-        response = await self.client.get(
+        response = self.client.get(
             f"/collections/{self.test_collection.id}/entries/9999",  # Nonexistent ID
             headers=self.headers,
         )
         self.assertEqual(response.status_code, 404)
         self.assertIn("Entry not found", response.json()["detail"])
 
-    @patch("apps.game_service.src.api.collection_entry.IGDBClient")
-    async def test_get_entry_permission_denied(self, mock_igdb_client_class):
+    @patch("src.api.collection_entry.IGDBClient")
+    def test_get_entry_permission_denied(self, mock_igdb_client_class):
         """
         Should return 403 Forbidden if user doesn't own the collection.
         """
@@ -227,7 +235,7 @@ class TestGetCollectionEntry(BaseCollectionEntryAPITest):
 
         # First create an entry
         data = {"game_id": 1, "notes": None}
-        create_response = await self.client.post(
+        create_response = self.client.post(
             f"/collections/{self.test_collection.id}/entries/",
             json=data,
             headers=self.headers,
@@ -241,10 +249,10 @@ class TestGetCollectionEntry(BaseCollectionEntryAPITest):
             email="other@example.com",
             password="$2b$12$KIXQJQbQhQJQbQhQJQbQhOQJQbQhQJQbQhQJQbQhQJQbQhQJQbQhO",
         )
-        other_headers = {"Authorization": generate_mock_jwt(str(other_user.id))}
+        other_headers = {"Authorization": generate_mock_jwt(other_user.username)}
 
         # Try to get
-        get_response = await self.client.get(
+        get_response = self.client.get(
             f"/collections/{self.test_collection.id}/entries/{entry_id}",
             headers=other_headers,
         )
