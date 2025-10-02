@@ -37,7 +37,7 @@ class TestDeleteCollectionEntry(BaseCollectionEntryServiceTest):
         )
 
         # Verify DB state - entry should be gone
-        db_entry = self.session.query(CollectionEntry).get(entry_id)
+        db_entry = self.session.get(CollectionEntry, entry_id)
         self.assertIsNone(db_entry)
 
     def test_delete_entry_not_found(self):

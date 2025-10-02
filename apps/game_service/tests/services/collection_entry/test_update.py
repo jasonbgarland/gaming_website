@@ -55,7 +55,7 @@ class TestUpdateCollectionEntry(BaseCollectionEntryServiceTest):
         self.assertEqual(result.custom_tags, {"favorite": True})
 
         # Verify DB state
-        db_entry = self.session.query(CollectionEntry).get(entry.id)
+        db_entry = self.session.get(CollectionEntry, entry.id)
         self.assertEqual(db_entry.notes, "Updated notes")
         self.assertEqual(db_entry.status, "completed")
         self.assertEqual(db_entry.rating, 9)
