@@ -42,6 +42,9 @@ coverage.xml
 TASK*.md
 TASK*.MD
 
+# AI assistant working docs
+.ai/
+
 # Misc
 *.sqlite3
 

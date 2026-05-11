@@ -7,6 +7,8 @@ from typing import Any, Dict, List
 
 import httpx
 
+from src.igdb.query_builder import build_igdb_query
+
 
 class IGDBClient:
     """
@@ -186,6 +188,44 @@ class IGDBClient:
         response.raise_for_status()
         results = response.json()
         mapped = [self._map_game(game) for game in results]
+        if cache:
+            cache.set(cache_key, mapped, ttl=300)  # 5 minutes
+        return mapped
+
+    def search_games_enhanced(self, query: str, filters=None) -> List[Dict[str, Any]]:
+        """
+        Enhanced search for games using the IGDB API with optional filters.
+
+        Args:
+            query (str): Search query string.
+            filters (GameFilters, optional): Filter parameters for advanced search.
+
+        Returns:
+            List[dict]: List of mapped game data dictionaries.
+        """
+        # Build the enhanced IGDB query
+        igdb_query = build_igdb_query(query, filters)
+
+        cache = getattr(self, "cache", None)
+        cache_key = f"enhanced_search:{query}:{str(filters)}"
+        if cache:
+            cached = cache.get(cache_key)
+            if cached is not None:
+                return cached
+
+        token = self.auth.get_token()
+        headers = {
+            "Client-ID": self.auth.client_id,
+            "Authorization": f"Bearer {token}",
+        }
+
+        response = httpx.post(
+            f"{self.base_url}/games", headers=headers, data=igdb_query, timeout=10
+        )
+        response.raise_for_status()
+        results = response.json()
+        mapped = [self._map_game(game) for game in results]
+
         if cache:
             cache.set(cache_key, mapped, ttl=300)  # 5 minutes
         return mapped
