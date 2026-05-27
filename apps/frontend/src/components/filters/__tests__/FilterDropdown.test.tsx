@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FilterDropdown, type FilterOption } from "../FilterDropdown";
 
@@ -166,7 +166,7 @@ describe("FilterDropdown", () => {
     await user.click(screen.getByRole("button", { name: /platform/i }));
     // Selected option should have a checkmark or distinct styling
     const selectedOption = screen.getByText("PC (Windows)").closest("button") || screen.getByText("PC (Windows)").parentElement;
-    expect(selectedOption).toHaveAttribute("aria-pressed", "true");
+    expect(selectedOption).toHaveAttribute("aria-selected", "true");
   });
 
   it("unselected options do not have aria-pressed true", async () => {
@@ -181,7 +181,7 @@ describe("FilterDropdown", () => {
     );
     await user.click(screen.getByRole("button", { name: /platform/i }));
     const unselectedOption = screen.getByText("PlayStation 4").closest("button") || screen.getByText("PlayStation 4").parentElement;
-    expect(unselectedOption).toHaveAttribute("aria-pressed", "false");
+    expect(unselectedOption).toHaveAttribute("aria-selected", "false");
   });
 
   // ─── Click outside closes ──────────────────────────────

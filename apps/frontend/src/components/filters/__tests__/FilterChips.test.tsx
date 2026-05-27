@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FilterChips } from "../FilterChips";
-import { DEFAULT_FILTERS, type SearchFilters } from "@/hooks/useEnhancedGameSearch";
+import { DEFAULT_FILTERS, type SearchFilters } from "@/hooks/useGameSearch";
 
 // We need label lookups to show "Platform: PS5" etc.
 // The component receives a labelMap prop that maps filter types + IDs to display names

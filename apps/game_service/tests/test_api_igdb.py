@@ -1,12 +1,12 @@
-"""
-Unit tests for the IGDB API endpoints and client logic.
-"""
+"""Unit tests for the IGDB API endpoints and client logic."""
 
-# pylint: disable=too-few-public-methods, broad-exception-raised
+# pylint: disable=too-few-public-methods, broad-exception-raised, duplicate-code
+# Mock data and test setup patterns are intentionally similar across test files
 import unittest
+
 from fastapi.testclient import TestClient
-from src.main import app
 from src.api.igdb import get_igdb_client
+from src.main import app
 
 
 # --- Mock Clients ---

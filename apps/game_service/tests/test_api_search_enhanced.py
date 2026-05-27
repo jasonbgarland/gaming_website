@@ -3,18 +3,20 @@ Unit tests for the /igdb/search-enhanced API endpoint.
 Tests parameter parsing, filter construction, validation, and error handling.
 """
 
-# pylint: disable=too-few-public-methods, broad-exception-raised
+# pylint: disable=too-few-public-methods, broad-exception-raised, duplicate-code
+# Mock data and test setup patterns are intentionally similar across test files
 import unittest
 from unittest.mock import patch
+
 from fastapi.testclient import TestClient
-from src.main import app
 from src.api.igdb import get_igdb_client
+from src.main import app
 
 
 class MockIGDBClientEnhanced:
     """Mock implementation of IGDBClient with search_games_enhanced support."""
 
-    def search_games_enhanced(self, query, filters=None):
+    def search_games_enhanced(self, query, _filters=None):
         """Mock enhanced search returning filtered results."""
         if query == "empty":
             return []
@@ -49,6 +51,7 @@ class MockIGDBClient(MockIGDBClientEnhanced):
     """Full mock with both standard and enhanced search methods."""
 
     def get_games_by_ids(self, game_ids):
+        """Mock fetch of games by their IDs."""
         if not game_ids:
             return []
         return [
@@ -65,12 +68,15 @@ class MockIGDBClient(MockIGDBClientEnhanced):
         ]
 
     def get_genres(self):
+        """Mock fetch of genres."""
         return [{"id": 1, "name": "Action"}, {"id": 2, "name": "Adventure"}]
 
     def get_platforms(self):
+        """Mock fetch of platforms."""
         return [{"id": 1, "name": "PC"}, {"id": 2, "name": "Switch"}]
 
     def search_games(self, query):
+        """Mock search for games by query string."""
         if query == "empty":
             return []
         if query == "error":
@@ -88,6 +94,7 @@ class MockIGDBClient(MockIGDBClientEnhanced):
         ]
 
     def get_game_by_id(self, game_id):
+        """Mock fetch of a single game by ID."""
         if game_id == 404:
             raise ValueError("Game not found")
         return {

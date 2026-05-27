@@ -2,14 +2,17 @@
 Base test class for collection entry service tests.
 """
 
+# pylint: disable=duplicate-code
+# Mock data structures and test utilities naturally share similar patterns across test files
+
 from unittest.mock import Mock
 
 from src.services.collection_entry_service import CollectionEntryService
-from tests.conftest import TestingSessionLocal
-from tests.test_base import TestDBBase
 
 from db.models.collection import CollectionEntry  # pylint: disable=wrong-import-order
 from db.models.game import Game  # pylint: disable=wrong-import-order
+from tests.conftest import TestingSessionLocal
+from tests.test_base import TestDBBase
 
 
 class BaseCollectionEntryServiceTest(TestDBBase):

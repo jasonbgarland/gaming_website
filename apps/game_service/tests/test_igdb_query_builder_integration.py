@@ -5,13 +5,16 @@ These tests validate that our generated query syntax is correct by making actual
 Set RUN_IGDB_INTEGRATION=1 environment variable to run these tests.
 """
 
+# pylint: disable=duplicate-code
+# Auth header setup is similar to production code by design
+
 import os
 import unittest
 
 import httpx
 from src.igdb.auth import IGDBAuth
 from src.igdb.client import IGDBClient
-from src.igdb.enums import Platform, Genre, Theme, PlayerPerspective, Keyword
+from src.igdb.enums import Genre, Keyword, Platform, PlayerPerspective, Theme
 from src.igdb.query_builder import build_igdb_query
 from src.igdb.schemas import GameFilters
 
@@ -140,7 +143,7 @@ class TestIGDBQueryBuilderIntegration(unittest.TestCase):
 
         # Print first few results for verification
         for i, game in enumerate(results[:3]):
-            print(f"Horror Game {i+1}: {game.get('name', 'Unknown')}")
+            print(f"Horror Game {i + 1}: {game.get('name', 'Unknown')}")
 
     def test_player_perspectives_filter_integration(self):
         """Test that player perspectives filter works with real IGDB API."""
@@ -162,7 +165,7 @@ class TestIGDBQueryBuilderIntegration(unittest.TestCase):
 
         # Print first few results for verification
         for i, game in enumerate(results[:3]):
-            print(f"FPS Game {i+1}: {game.get('name', 'Unknown')}")
+            print(f"FPS Game {i + 1}: {game.get('name', 'Unknown')}")
 
     def test_rating_range_filter_integration(self):
         """Test that rating range filter works with real IGDB API."""
@@ -204,7 +207,7 @@ class TestIGDBQueryBuilderIntegration(unittest.TestCase):
 
         # Print first few results for verification
         for i, game in enumerate(results[:3]):
-            print(f"Open World Game {i+1}: {game.get('name', 'Unknown')}")
+            print(f"Open World Game {i + 1}: {game.get('name', 'Unknown')}")
 
     # ===============================================
     # Combined Filter Integration Tests
@@ -232,7 +235,7 @@ class TestIGDBQueryBuilderIntegration(unittest.TestCase):
 
         # Print results for verification
         for i, game in enumerate(results[:5]):
-            print(f"Combined Filter Game {i+1}: {game.get('name', 'Unknown')}")
+            print(f"Combined Filter Game {i + 1}: {game.get('name', 'Unknown')}")
 
     def test_comprehensive_filters_integration(self):
         """Test that comprehensive new filters work with real IGDB API."""
@@ -258,7 +261,7 @@ class TestIGDBQueryBuilderIntegration(unittest.TestCase):
 
         # Print results for verification
         for i, game in enumerate(results[:3]):
-            print(f"Comprehensive Filter Game {i+1}: {game.get('name', 'Unknown')}")
+            print(f"Comprehensive Filter Game {i + 1}: {game.get('name', 'Unknown')}")
 
     # ===============================================
     # Edge Case Integration Tests
@@ -269,7 +272,8 @@ class TestIGDBQueryBuilderIntegration(unittest.TestCase):
         # Build query that should return few or no results
         search_term = "zzz_nonexistent_game"
         filters = GameFilters(
-            platforms=[999], years=[1990]  # Non-existent platform  # Very old year
+            platforms=[999],
+            years=[1990],  # Non-existent platform  # Very old year
         )
         query = build_igdb_query(search_term, filters)
 

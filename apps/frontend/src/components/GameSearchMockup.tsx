@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 
 /**
  * UI Mockup for Enhanced Game Search with Filters
@@ -278,9 +279,11 @@ const GameSearchMockup: React.FC = () => {
               key={game.id}
               className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
             >
-              <img
+              <Image
                 src={game.cover}
                 alt={game.name}
+                width={400}
+                height={192}
                 className="w-full h-48 object-cover"
               />
               <div className="p-4">

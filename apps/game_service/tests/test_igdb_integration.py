@@ -2,6 +2,9 @@
 Integration tests for IGDB API endpoints using real IGDB credentials and API.
 """
 
+# pylint: disable=duplicate-code
+# Test assertions for API response structure are intentionally similar
+
 import os
 import unittest
 
