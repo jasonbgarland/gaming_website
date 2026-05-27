@@ -1,4 +1,4 @@
-import { GameSearch } from "@components/games/GameSearch";
+import { EnhancedGameSearch } from "@components/games/EnhancedGameSearch";
 
 export default function GameSearchPage() {
   return (
@@ -7,7 +7,8 @@ export default function GameSearchPage() {
         <h1 className="text-3xl font-bold mb-8 text-gamer-text">
           Search Games
         </h1>
-        <GameSearch />
+        {/* platformOptions and genreOptions will be populated in task 2 (API fetch) */}
+        <EnhancedGameSearch platformOptions={[]} genreOptions={[]} />
       </div>
     </main>
   );
