@@ -19,7 +19,8 @@ export interface FilterDropdownProps {
  * A reusable dropdown filter component with multi-select support.
  * Shows a button with the filter label and an optional badge showing
  * how many items are selected. Clicking the button toggles a dropdown
- * with selectable options.
+ * with selectable options. Includes search functionality for easier navigation
+ * when there are many options.
  */
 export function FilterDropdown({
   label,
@@ -29,7 +30,9 @@ export function FilterDropdown({
   className = "",
 }: FilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -48,6 +51,20 @@ export function FilterDropdown({
     }
   }, [isOpen]);
 
+  // Focus search input when dropdown opens
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isOpen]);
+
+  // Clear search when dropdown closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchQuery("");
+    }
+  }, [isOpen]);
+
   function handleToggleOption(optionId: number) {
     if (selected.includes(optionId)) {
       // Deselect — remove from list
@@ -57,6 +74,13 @@ export function FilterDropdown({
       onChange([...selected, optionId]);
     }
   }
+
+  // Filter options based on search query
+  const filteredOptions = searchQuery.trim()
+    ? options.filter((option) =>
+        option.label.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : options;
 
   return (
     <div ref={dropdownRef} className={`relative ${className}`}>
@@ -95,19 +119,33 @@ export function FilterDropdown({
           role="listbox"
           aria-label={`${label} options`}
         >
+          {/* Search input */}
+          {options.length > 5 && (
+            <div className="p-2 border-b border-gamer-border">
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="w-full px-3 py-1.5 bg-gamer-surface border border-gamer-border rounded text-gamer-text placeholder-gamer-muted focus:outline-none focus:ring-2 focus:ring-gamer-primary"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          )}
+
           <div className="max-h-64 overflow-y-auto">
-            {options.length === 0 ? (
+            {filteredOptions.length === 0 ? (
               <div className="px-4 py-3 text-gamer-muted text-sm">
-                No options available
+                {searchQuery.trim() ? "No matches found" : "No options available"}
               </div>
             ) : (
-              options.map((option) => (
+              filteredOptions.map((option) => (
                 <button
                   key={option.id}
                   onClick={() => handleToggleOption(option.id)}
                   className="w-full text-left px-4 py-2 hover:bg-gamer-subtle transition-colors text-gamer-text flex items-center justify-between"
                   role="option"
-                  aria-pressed={selected.includes(option.id)}
                   aria-selected={selected.includes(option.id)}
                 >
                   <span>{option.label}</span>
