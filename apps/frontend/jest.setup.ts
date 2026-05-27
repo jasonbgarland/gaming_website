@@ -2,6 +2,7 @@ import "@testing-library/jest-dom";
 
 // Set up environment variables for tests
 process.env.NEXT_PUBLIC_AUTH_API_URL = "http://localhost:8001";
+process.env.NEXT_PUBLIC_GAME_API_URL = "http://localhost:8002";
 
 // Suppress act warnings for async operations that are hard to control
 // These warnings occur when async state updates happen in finally blocks

@@ -1,132 +1,34 @@
 # Copilot Instructions
 
-## Code Style & Preferences
+## General
 
-### Important General Guidelines
+- Explain suggestions so I can learn; break solutions into steps and confirm before proceeding.
+- Prefer iterative solutions; start small and iterate.
+- Use VS Code tasks for repeatable operations.
+- For new features: start with interface/API design, include logging for debugging.
 
-- I want to learn and improve my skills and knowledge, so please provide explanations for your suggestions
-- Always break down solutions into steps and confirm before proceeding
-- Follow test driven development (TDD) principles as much as possible
-  - Write a failing test first with expectations on how we would like to call the code.
-  - Run the test to confirm it fails.
-  - Write the minimum code to make the test pass.
-  - Run the test to confirm it passes.
-  - Perform any refactoring and confirm the test still passes.
-  - Verify feature is documented appropriately and pylint is passing before continuing to next step.
-- Use vs code tasks when possible to get repeatable results.
-- Prefer iterative solutions, start small and iterate
-- Write comments for complex logic
+## Agent Delegation
 
-## Checklist-Driven Workflow
+- After making any code changes, always delegate test verification to the `test-runner` agent.
+- When tests are failing and need to be fixed, delegate to the `fix-failures` agent.
+- When fixing lint findings, delegate to the `lint-and-fix` agent.
+- Do not run tests or linting directly — use the specialist agents so results stay compact.
 
-- For every project, create a `PROJECT_PLAN.md` with a high-level checklist of all major tasks/milestones.
-- For each work session or major task, create or update a `TASK_PLAN.md` with a sequential checklist of atomic steps.
-- Always work from top to bottom in the checklist, checking off items as you go.
-- Use these files to track progress and make it easy to pause/resume work at any time.
-- Update the checklists as tasks are completed or requirements change.
+## Workflow
 
-### Language-Specific Preferences
+- Maintain `PROJECT_PLAN.md` (high-level milestones) and `TASK_PLAN.md` (session-level atomic steps). Work top to bottom, check off as you go.
+- Follow TDD: write failing test → confirm it fails → implement → confirm it passes → refactor → confirm still passes → verify docs and pylint are clean before moving on.
 
-#### Python
+## Python
 
-- Follow PEP 8 style guidelines
-- Use type hints for function parameters and return values
-- Create docstrings for all public functions and classes
-- Prefer f-strings for string formatting
-- Use descriptive variable names (avoid abbreviations)
-- Use xUnit style tests using the built in `unittest` module
-- Do not use the `__all__` pattern in `__init__.py` files; importing \* is not a preferred pattern in this project
+- Use `unittest` (not pytest); xUnit style.
+- No `__all__` in `__init__.py`; prefer explicit imports.
+- Assert order: `assertEqual(expected, actual)`.
+- Validation: pydantic.
 
-## Next.js Conventions
+### SQLite Test Isolation
 
-- Use a `__tests__` folder inside each feature or route directory for unit and integration tests (e.g., `src/app/(auth)/login/__tests__/loginForm.test.tsx`).
-- Do not colocate test files with components; keep them in `__tests__` to avoid clutter and to match large-scale project practices.
-- Prefer TDD: write tests before implementing components.
-- Use Jest and React Testing Library for all React/Next.js component tests.
-- Use TypeScript for all components and tests.
-- Keep test file names descriptive (e.g., `loginForm.test.tsx`).
-- Document any new conventions in this section as the project evolves.
-
-## Architecture & Patterns
-
-- Prefer composition over inheritance
-- Use dependency injection where appropriate
-- Follow SOLID principles
-
-## File Organization
-
-- Group related files in appropriate directories
-- Use consistent naming conventions for files and folders
-- Keep configuration files in the root or a dedicated config directory
-- Separate source code from tests and documentation
-
-## Testing Preferences
-
-- Write unit tests for new functions and classes
-- Use descriptive test names that explain what is being tested
-- Include both positive and negative test cases
-- Mock external dependencies in tests
-- When asserting equality, the first parameter should be the expected value, and the second should be the actual value
-
-## Documentation
-
-- Include README files for each major component
-- Document public APIs and interfaces
-- Explain complex algorithms or business logic
-- Keep documentation up to date with code changes
-
-## Specific Instructions for Copilot
-
-### When Suggesting Code:
-
-- Suggest meaningful variable names based on context
-- Optimize for readability over cleverness
-
-### When Refactoring:
-
-- Maintain existing functionality
-- Improve code organization and clarity
-- Add missing error handling
-- Update documentation if needed
-- Suggest breaking changes only when significantly beneficial
-
-### For New Features:
-
-- Start with a clear interface or API design
-- Include appropriate logging, especially for debugging purposes.
-- Add configuration options where useful
-
-### Technologies I Use:
-
-- Frontend: React
-- Backend: Python
-- Databases: PostgreSQL, MongoDB, Redis
-- Cloud Platforms: Azure
-- Development Tools: Docker, CI/CD tools
-
-- Validation: pydantic
-
-## Security Considerations
-
-- Always validate user input
-- Don't commit secrets or API keys
-- Always validate user input
-- Don't commit secrets or API keys
-
-## Project Considerations
-
-### SQLite Testing Best Practice
-
-> **Note:** In-memory SQLite databases (`sqlite:///:memory:`) are per connection.  
-> For reliable test isolation, each test class (or test) should create its own engine and schema.
-
-**How to do this:**
-
-- In your test class, use `setUp()` to create a new engine, schema, and session for each test.
-- Use `tearDown()` to close the session and dispose the engine.
-- Do not share the engine or session across multiple tests.
-
-**Example:**
+In-memory SQLite (`sqlite:///:memory:`) is per-connection. Each test class must create its own engine/session in `setUp` and tear it down in `tearDown`:
 
 ```python
 def setUp(self):
@@ -134,9 +36,22 @@ def setUp(self):
     Base.metadata.create_all(self.engine)
     self.SessionLocal = sessionmaker(bind=self.engine)
     self.db = self.SessionLocal()
-    self.service = CollectionService()
 
 def tearDown(self):
     self.db.close()
     self.engine.dispose()
 ```
+
+## Frontend (Next.js)
+
+- Tests in `__tests__/` inside each feature directory — not colocated with components.
+- Jest + React Testing Library; TypeScript for all components and tests.
+
+## Tech Stack
+
+- Frontend: React / Next.js — Backend: Python — Validation: pydantic
+- Databases: PostgreSQL, MongoDB, Redis — Cloud: Azure — Tooling: Docker, CI/CD
+
+## Security
+
+- Always validate user input; never commit secrets or API keys.

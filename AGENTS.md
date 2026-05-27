@@ -2,6 +2,7 @@
 
 - Do not commit without permission — show staged changes and wait for go-ahead
 - Working docs and temporary AI plans go in `.ai/` (gitignored)
+- Update `.ai/HANDOFF.md` after completing tasks and before ending a session — see `handoff` skill
 - I want to learn — provide explanations, break solutions into steps, confirm before proceeding
 
 ## Workflow
