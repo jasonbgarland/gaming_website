@@ -23,7 +23,7 @@ COPY pyproject.toml poetry.lock ./
 # Install dependencies
 RUN poetry install --no-root --only main
 
-# Copy the migrations and models
+# Copy the migrations, models, and seed script
 COPY migrations ./migrations
 COPY alembic.ini ./
 COPY db ./db
@@ -31,5 +31,5 @@ COPY db ./db
 # Set PYTHONPATH
 ENV PYTHONPATH=/app
 
-# Run migrations when container starts
-CMD ["poetry", "run", "alembic", "upgrade", "head"]
+# Run migrations then seed the test user
+CMD ["sh", "-c", "poetry run alembic upgrade head && poetry run python db/seed.py"]
