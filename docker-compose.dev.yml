@@ -12,6 +12,8 @@ services:
       - /app/.next
     environment:
       - NODE_ENV=development
+      # Server-side fetch URL (container-to-container)
+      - GAME_SERVICE_INTERNAL_URL=http://game_service:8000
     command: npm run dev
 
   auth_service:
