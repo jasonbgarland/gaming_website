@@ -1,6 +1,7 @@
 ---
 description: "Use when: fix failing tests, fix test errors, tests are broken, make tests pass, repair failing test suite. Accepts test failure output (or runs tests first), then iterates — editing source code — until all tests pass."
-tools: [run_in_terminal, get_terminal_output, read, edit, search, todo, agent]
+model: ["Claude Sonnet 4.5 (copilot)"]
+tools: [execute, read, edit, search, todo, agent]
 argument-hint: "Suite(s) to fix: all | db | auth | game | frontend. Optionally paste existing failure output to skip the initial test run."
 ---
 
@@ -34,21 +35,17 @@ Return the **Output Format** below.
 
 ## Running individual tests (faster feedback loop)
 
+**Important**: Always use relative paths from workspace root. Do not use VS Code tasks.
+
 ```bash
-# Game Service — single module
-cd /Users/harold/code/gaming_website/apps/game_service && \
-  PYTHONPATH=/Users/harold/code/gaming_website/apps/game_service:/Users/harold/code/gaming_website \
-  poetry run python -m unittest <module.path> -v
+# Game Service — single module (from workspace root)
+cd apps/game_service && PYTHONPATH=.:../.. poetry run python -m unittest <module.path> -v && cd ../..
 
-# Auth Service — single module
-cd /Users/harold/code/gaming_website/apps/auth_service && \
-  PYTHONPATH=/Users/harold/code/gaming_website/apps/auth_service:/Users/harold/code/gaming_website \
-  poetry run python -m unittest <module.path> -v
+# Auth Service — single module (from workspace root)
+cd apps/auth_service && PYTHONPATH=.:../.. poetry run python -m unittest <module.path> -v && cd ../..
 
-# DB Models — single module
-cd /Users/harold/code/gaming_website && \
-  PYTHONPATH=/Users/harold/code/gaming_website \
-  poetry run python -m unittest <module.path> -v
+# DB Models — single module (from workspace root)
+PYTHONPATH=. poetry run python -m unittest <module.path> -v
 ```
 
 ## Constraints
