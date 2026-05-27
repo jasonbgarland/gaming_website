@@ -6,7 +6,6 @@ Provides methods for searching, fetching, and mapping game data.
 from typing import Any, Dict, List
 
 import httpx
-
 from src.igdb.query_builder import build_igdb_query
 
 
@@ -109,6 +108,8 @@ class IGDBClient:
         )
         response.raise_for_status()
         genres = response.json()
+        # Sort alphabetically by name for better UX
+        genres.sort(key=lambda g: g.get("name", "").lower())
         if cache:
             cache.set(cache_key, genres, ttl=86400)  # 24 hours
         return genres
@@ -137,6 +138,8 @@ class IGDBClient:
         )
         response.raise_for_status()
         platforms = response.json()
+        # Sort alphabetically by name for better UX
+        platforms.sort(key=lambda p: p.get("name", "").lower())
         if cache:
             cache.set(cache_key, platforms, ttl=86400)  # 24 hours
         return platforms
