@@ -5,7 +5,7 @@ import { useEnhancedGameSearch, buildFilterParams, type SearchFilters, DEFAULT_F
 // Mock dependencies
 jest.mock("swr");
 jest.mock("../useDebounce", () => ({
-  useDebounce: (value: string, _delay: number) => value, // skip debounce in tests
+  useDebounce: (value: string) => value, // skip debounce in tests
 }));
 
 const mockGames = [

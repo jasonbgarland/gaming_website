@@ -214,7 +214,11 @@ export default function ThemeTest() {
               <h2 className="text-xl font-semibold text-foreground mb-4">
                 Game Search Component
               </h2>
-              <GameSearch className="w-full" />
+              <GameSearch
+                className="w-full"
+                platformOptions={[]}
+                genreOptions={[]}
+              />
             </div>
 
             {/* Game Image */}

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { type SearchFilters } from "@/hooks/useEnhancedGameSearch";
+import { type SearchFilters } from "@/hooks/useGameSearch";
 
 /**
  * Label map provides human-readable names for filter IDs.

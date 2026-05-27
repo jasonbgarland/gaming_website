@@ -1,57 +1,151 @@
 "use client";
 
+import React from "react";
+import { useGameSearch, type SearchFilters } from "@/hooks/useGameSearch";
+import { FilterDropdown, type FilterOption } from "@/components/filters/FilterDropdown";
+import { FilterChips, type FilterLabelMap } from "@/components/filters/FilterChips";
+import { YearRangeDropdown } from "@/components/filters/YearRangeDropdown";
 import { GameImage } from "./GameImage";
-import { useGameSearch, type Game } from "@/hooks/useGameSearch";
 
-export type { Game };
-
-export interface GameSearchProps {
-  className?: string;
-  initialResults?: Game[];
+export interface Game {
+  id: number;
+  name: string;
+  cover?: { url?: string };
+  first_release_date?: number;
+  summary?: string;
 }
 
+export interface GameSearchProps {
+  platformOptions: FilterOption[];
+  genreOptions: FilterOption[];
+  className?: string;
+}
+
+/**
+ * Game search with Platform, Genre, and Year range filters.
+ * Uses useGameSearch for state management and SWR-backed API calls.
+ * Filter options (platformOptions, genreOptions) are passed as props so
+ * the parent can fetch them from the API independently (task 2).
+ */
 export function GameSearch({
+  platformOptions,
+  genreOptions,
   className = "",
-  initialResults,
 }: GameSearchProps) {
-  const { query, setQuery, results, isLoading, error, hasQuery, hasResults } =
-    useGameSearch({ initialResults });
+  const {
+    query,
+    setQuery,
+    filters,
+    updateFilter,
+    clearFilters,
+    results,
+    isLoading,
+    error,
+    hasQuery,
+    hasResults,
+    activeFilterCount,
+  } = useGameSearch();
+
+  // Build label map for FilterChips from the options passed as props
+  const labelMap: FilterLabelMap = {
+    platforms: Object.fromEntries(platformOptions.map((o) => [o.id, o.label])),
+    genres: Object.fromEntries(genreOptions.map((o) => [o.id, o.label])),
+  };
+
+  /**
+   * Handle chip removal. For array-based filters (platforms, genres),
+   * remove the specific ID. For scalar filters (yearStart, yearEnd, ratings),
+   * clear the value entirely.
+   * Note: FilterChips calls onRemoveFilter twice for year range (yearStart + yearEnd).
+   */
+  function handleRemoveFilter(
+    filterType: keyof SearchFilters,
+    value: number | undefined
+  ) {
+    const current = filters[filterType];
+    if (Array.isArray(current) && value !== undefined) {
+      updateFilter(filterType, (current as number[]).filter((id) => id !== value) as SearchFilters[typeof filterType]);
+    } else {
+      updateFilter(filterType, undefined as SearchFilters[typeof filterType]);
+    }
+  }
 
   return (
     <div className={`w-full max-w-4xl ${className}`}>
-      {/* Search Form */}
-      <form className="mb-8" onSubmit={(e) => e.preventDefault()}>
-        <div className="flex gap-4">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for games..."
-            className="flex-1 px-4 py-2 border border-gamer-input-border rounded-lg bg-gamer-input text-gamer-text focus:outline-none focus:ring-2 focus:ring-gamer-primary transition-all"
-            disabled={isLoading}
-            autoFocus
-          />
-        </div>
+      {/* Search input */}
+      <form className="mb-6" onSubmit={(e) => e.preventDefault()}>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search for games..."
+          className="w-full px-4 py-2 border border-gamer-input-border rounded-lg bg-gamer-input text-gamer-text focus:outline-none focus:ring-2 focus:ring-gamer-primary transition-all"
+          disabled={isLoading}
+          autoFocus
+        />
       </form>
 
-      {/* Error State */}
+      {/* Filter row */}
+      <div className="mb-4">
+        <div className="flex flex-wrap gap-3 items-center">
+          <FilterDropdown
+            label="Platform"
+            options={platformOptions}
+            selected={filters.platforms}
+            onChange={(selected) => updateFilter("platforms", selected)}
+          />
+          <FilterDropdown
+            label="Genre"
+            options={genreOptions}
+            selected={filters.genres}
+            onChange={(selected) => updateFilter("genres", selected)}
+          />
+          <YearRangeDropdown
+            yearStart={filters.yearStart}
+            yearEnd={filters.yearEnd}
+            onChange={({ yearStart, yearEnd }) => {
+              updateFilter("yearStart", yearStart);
+              updateFilter("yearEnd", yearEnd);
+            }}
+          />
+          {activeFilterCount > 0 && (
+            <span className="text-sm text-gamer-muted">
+              {activeFilterCount} active filter(s)
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Active filter chips */}
+      {activeFilterCount > 0 && (
+        <div className="mb-6">
+          <FilterChips
+            filters={filters}
+            labelMap={labelMap}
+            onRemoveFilter={handleRemoveFilter}
+            onClearAll={clearFilters}
+          />
+        </div>
+      )}
+
+      {/* Error state */}
       {error && (
         <div className="mb-4 p-4 border border-danger rounded-lg bg-danger text-danger-foreground">
-          {typeof error === "string" ? error : error.message}
+          {typeof error === "string" ? error : (error as Error).message}
         </div>
       )}
 
-      {/* Loading State */}
+      {/* Loading state */}
       {isLoading && (
-        <div className="text-center py-8">
-          <div className="text-gamer-muted">Searching for games...</div>
+        <div className="text-center py-8 text-gamer-muted">
+          Searching for games...
         </div>
       )}
 
-      {/* Results */}
+      {/* Results grid */}
       {!isLoading && hasResults && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {results.map((game) => (
+          {results.map((game: Game) => (
             <div
               key={game.id}
               className="border border-gamer-border rounded-lg p-4 bg-gamer-surface transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
@@ -80,13 +174,21 @@ export function GameSearch({
         </div>
       )}
 
-      {/* No Results */}
+      {/* No results state */}
       {!isLoading && hasQuery && !hasResults && !error && (
         <div className="text-center py-8 text-gamer-muted">
           No games found for &quot;{query}&quot;. Try a different search term.
         </div>
       )}
+
+      {/* Empty/prompt state */}
+      {!isLoading && !hasQuery && !hasResults && !error && (
+        <div className="text-center py-8 text-gamer-muted">
+          Search or filter to find games.
+        </div>
+      )}
     </div>
   );
 }
+
 export default GameSearch;
